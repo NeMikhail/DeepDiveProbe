@@ -238,7 +238,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!114 &1388659302072501915
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -253,6 +253,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerRB: {fileID: 1416145259086306232}
   _object: {fileID: 3882636026279493967}
+  _playerSpriteRenderer: {fileID: 0}
 --- !u!1 &5210061027563749956
 GameObject:
   m_ObjectHideFlags: 0
@@ -326,8 +327,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -1853861639
-  m_SortingLayer: 4
+  m_SortingLayerID: -711199687
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 8c179eca93b61b5468eec4ad5d6beddc, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

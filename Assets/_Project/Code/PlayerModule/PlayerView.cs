@@ -10,6 +10,8 @@ namespace Player
         [SerializeField] private SpriteRenderer _playerSpriteRenderer;
         private int _currentLine;
         private int _currentLayer;
+        private int _currentOxygen;
+        private int _currentDepth;
         
         private string _viewID;
 
@@ -19,16 +21,7 @@ namespace Player
         public string ViewID { get => _viewID; set => _viewID = value; }
         public int CurrentLine { get => _currentLine; set => _currentLine = value; }
         public int CurrentLayer { get => _currentLayer; set => _currentLayer = value; }
-
-        private void Awake()
-        {
-            _viewID = _object.name;
-        }
-
-
-        private void OnCollisionEnter2D(Collision2D collision)
-        {
-
-        }
+        public int CurrentOxygen { get => _currentOxygen; set => _currentOxygen = value; }
+        public int CurrentDepth { get => _currentDepth; set => _currentDepth = value; }
     }
 }

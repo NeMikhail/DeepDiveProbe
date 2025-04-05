@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using GameCoreModule;
 using MAEngine;
-using Player;
 using UnityEngine;
 using Zenject;
 
@@ -29,17 +28,20 @@ namespace UI
         public void PreInitialisation()
         {
             _guiView.InitializeView();
-            
         }
 
         public void Initialisation()
         {
-            
+            _playerEventBus.OnChangeLayer += ChangeLayerIndication;
+            _playerEventBus.OnOxygenChanged += UpdateOxygenSlider;
+            _playerEventBus.OnDepthChanged += UpdateDepthSlider;
         }
 
         public void Cleanup()
         {
-            
+            _playerEventBus.OnChangeLayer -= ChangeLayerIndication;
+            _playerEventBus.OnOxygenChanged -= UpdateOxygenSlider;
+            _playerEventBus.OnDepthChanged -= UpdateDepthSlider;
         }
         
         public void FixedExecute(float fixedDeltaTime)
@@ -53,6 +55,20 @@ namespace UI
 
         }
         
+        private void ChangeLayerIndication(int layer)
+        {
+            _guiView.UpdateLayerImages(layer);
+        }
+        
+        private void UpdateOxygenSlider(int oxygenValue)
+        {
+            _guiView.OxygenSlider.value = oxygenValue;
+        }
+        
+        private void UpdateDepthSlider(int depth)
+        {
+            _guiView.DepthSlider.value = depth;
+        }
         
         private void SetPauseState()
         {

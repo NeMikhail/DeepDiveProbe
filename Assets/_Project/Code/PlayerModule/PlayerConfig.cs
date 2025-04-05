@@ -9,6 +9,7 @@ namespace Player
         [SerializeField] private float _lineChangingTime;
         [SerializeField] private float _layerChangingTime;
         [SerializeField] private int _oxygenValue;
+        [SerializeField] private int _addingOxygenValue;
         [SerializeField] private float _line1PositionX;
         [SerializeField] private float _line2PositionX;
         [SerializeField] private float _line3PositionX;
@@ -21,13 +22,12 @@ namespace Player
         public float LineChangingTime { get => _lineChangingTime; }
         public float LayerChangingTime { get => _layerChangingTime; }
         public int OxygenValue { get => _oxygenValue; }
+        public int AddingOxygenValue { get => _addingOxygenValue; }
         public float Line1PositionX { get => _line1PositionX; }
         public float Line2PositionX { get => _line2PositionX; }
         public float Line3PositionX { get => _line3PositionX; }
         public Sprite DefaultSprite { get => _defaultSprite; }
         public Sprite GoingDownSprite { get => _goingDownSprite; }
         public Sprite GoingUpSprite { get => _goingUpSprite; }
-        
-        
     }
 }

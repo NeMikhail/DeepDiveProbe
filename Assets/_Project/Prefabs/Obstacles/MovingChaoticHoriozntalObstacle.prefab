@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &2868734234375626395
+--- !u!1001 &3464367616064957824
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -10,19 +10,19 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6629896565203831962, guid: b23d182d540a78e4ab3f92502ed69660, type: 3}
       propertyPath: m_Name
-      value: MovingObstacle
+      value: MovingChaoticHoriozntalObstacle
       objectReference: {fileID: 0}
     - target: {fileID: 6904282883807781363, guid: b23d182d540a78e4ab3f92502ed69660, type: 3}
       propertyPath: m_Color.b
-      value: 0.42239228
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6904282883807781363, guid: b23d182d540a78e4ab3f92502ed69660, type: 3}
       propertyPath: m_Color.g
-      value: 0.42239228
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6904282883807781363, guid: b23d182d540a78e4ab3f92502ed69660, type: 3}
       propertyPath: m_Color.r
-      value: 0.7924528
+      value: 0.5471698
       objectReference: {fileID: 0}
     - target: {fileID: 8696584046216207065, guid: b23d182d540a78e4ab3f92502ed69660, type: 3}
       propertyPath: m_LocalPosition.x

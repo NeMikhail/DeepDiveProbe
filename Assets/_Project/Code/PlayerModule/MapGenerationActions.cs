@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using GameCoreModule;
 using MAEngine;
@@ -40,9 +41,11 @@ namespace Player
             {
                 position = new Vector2(0, ypos);
                 GameObjectSpawnCallback callback = new GameObjectSpawnCallback();
-                _gameEventBus.OnSpawnObject(PrefabID.SpawnZones, Vector2.zero, layerView.SpawnZonesTransform, callback);
+                _gameEventBus.OnSpawnObject(PrefabID.SpawnZones,
+                    Vector2.zero, layerView.SpawnZonesTransform, callback);
                 GameObject spawnZonesObject = callback.SpawnedObject;
-                spawnZonesObject.transform.position = position;
+                spawnZonesObject.transform.position = new Vector2(layerView.SpawnZonesTransform.position.x,
+                    layerView.SpawnZonesTransform.position.y + position.y);
                 SpawnZonesView view = callback.SpawnedObject.GetComponent<SpawnZonesView>();
                 layerView.SpawnZones.Add(view);
                 ypos -= 5f;
@@ -114,31 +117,6 @@ namespace Player
                 callback.SpawnedObject.transform.position = new Vector2(6.7f, position.y);
                 ypos -= 10;
             }
-        }
-    }
-
-    public class ObstaclesActions : IAction, IInitialisation, ICleanUp
-    {
-        private MapView _mapView;
-        private GameEventBus _gameEventBus;
-        private System.Random _random;
-
-        [Inject]
-        public void Construct(MapView mapView, GameEventBus gameEventBus)
-        {
-            _mapView = mapView;
-            _gameEventBus = gameEventBus;
-        }
-
-
-        public void Initialisation()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void Cleanup()
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

@@ -11,5 +11,14 @@ public enum PrefabID
     Wall3R = 7,
     Wall4L = 8,
     Wall4R = 9,
-    SpawnZones = 10
+    SpawnZones = 10,
+    OxygenBubble = 11,
+    StaticObstacle = 12,
+    MovingHorizontalObstacle = 13,
+    MovingLayersObstacle = 14,
+    MovingVerticalUpObstacle = 15,
+    MovingVerticalDownObstacle = 16,
+    MovingChaoticHorizontalObstacle = 17,
+    MovingChaoticVerticalObstacle = 18,
+    StalkingObstacle = 19
 }

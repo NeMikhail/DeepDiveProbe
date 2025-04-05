@@ -12,6 +12,8 @@ namespace Player
         private PlayerView _playerView;
         private InputEventBus _inputEvents;
         private PlayerConfig _playerConfig;
+        private PlayerEventBus _playerEventBus;
+        
         private int _currentLine;
         private int _currentLayer;
         private int _targetLayer;
@@ -23,18 +25,20 @@ namespace Player
 
         [Inject]
         public void Construct(SceneViewsContainer sceneViewsContainer, InputEventBus inputEvents,
-            PlayerConfig playerConfig, PlayerView playerView)
+            PlayerConfig playerConfig, PlayerView playerView, PlayerEventBus playerEventBus)
         {
             _sceneViewsContainer = sceneViewsContainer;
             _inputEvents = inputEvents;
             _playerConfig = playerConfig;
             _playerView = playerView;
+            _playerEventBus = playerEventBus;
         }
 
         public void Initialisation()
         {
             _currentLine = 2;
             _currentLayer = 2;
+            _playerView.CurrentLayer = 2;
             _inputEvents.OnMoveLeftButtonPerformed += TryMoveLeft;
             _inputEvents.OnMoveRightButtonPerformed += TryMoveRight;
             _inputEvents.OnMoveUpButtonPerformed += TryMoveUp;
@@ -77,6 +81,7 @@ namespace Player
         {
             _playerView.PlayerRB.linearVelocity =
                 new Vector2(_playerView.PlayerRB.linearVelocity.x, -1 * _playerConfig.Speed);
+            _playerEventBus.OnDepthChanged?.Invoke(-(int)_playerView.transform.position.y);
         }
 
         private void MoveVertical()
@@ -86,6 +91,7 @@ namespace Player
                 _isMoving = false;
                 _currentLayer = _targetLayer;
                 _playerView.CurrentLayer = _currentLayer;
+                _playerEventBus.OnChangeLayer?.Invoke(_currentLayer);
                 _playerView.PlayerSpriteRenderer.sprite = _playerConfig.DefaultSprite;
             }
         }

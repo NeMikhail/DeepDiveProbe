@@ -9,6 +9,8 @@ namespace Player
             base.Initialise();
             InitializeMovementActions();
             InitializeMapGeneration();
+            InitializeObstaclesActions();
+            InitializePlayerActions();
         }
 
         private void InitializeMovementActions()
@@ -23,6 +25,20 @@ namespace Player
             MapGenerationActions mapGenerationActions =
                 _di.Resolve<MapGenerationActions>();
             _actions.Add(mapGenerationActions);
+        }
+
+        private void InitializeObstaclesActions()
+        {
+            ObstaclesActions obstaclesActions =
+                _di.Resolve<ObstaclesActions>();
+            _actions.Add(obstaclesActions);
+        }
+
+        private void InitializePlayerActions()
+        {
+            PlayerActions playerActions =
+                _di.Resolve<PlayerActions>();
+            _actions.Add(playerActions);
         }
     }
 }

@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4f862786b144b56be8a8179057a616c, type: 3}
+  m_Name: ObstaclesSpawnConfig
+  m_EditorClassIdentifier: 
+  _stage1OxygenSpawnCount: 2
+  _stage2OxygenSpawnCount: 1
+  _stage3OxygenSpawnCount: 0.5
+  _oxygenSpawnIndexes: 000000000200000005000000070000000a000000
+  _stage1Obstacles: 0c0000000d0000000f000000
+  _stage2Obstacles: 0c0000000d000000100000000e000000
+  _stage3Obstacles: 0c00000011000000120000000e00000013000000
