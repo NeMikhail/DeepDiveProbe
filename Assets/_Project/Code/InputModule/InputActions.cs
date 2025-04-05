@@ -105,8 +105,12 @@ namespace Input
             gameInput.Sprint.performed += InvokeRunPerformedEvent;
             gameInput.Sprint.canceled += InvokeRunCanceledEvent;
             gameInput.Interact.performed += InvokeInteractPerformedEvent;
+            gameInput.MoveLeft.performed += InvokeMoveLeftEvent;
+            gameInput.MoveRight.performed += InvokeMoveRightEvent;
+            gameInput.MoveUp.performed += InvokeMoveUpEvent;
+            gameInput.MoveDown.performed += InvokeMoveDownEvent;
         }
-
+        
         private void UnBindGameInput(InputSystem_Actions.PlayerActions gameInput)
         {
             gameInput.Pause.performed -= InvokePauseEvent;
@@ -117,6 +121,10 @@ namespace Input
             gameInput.Sprint.performed -= InvokeRunPerformedEvent;
             gameInput.Sprint.canceled -= InvokeRunCanceledEvent;
             gameInput.Interact.performed -= InvokeInteractPerformedEvent;
+            gameInput.MoveLeft.performed -= InvokeMoveLeftEvent;
+            gameInput.MoveRight.performed -= InvokeMoveRightEvent;
+            gameInput.MoveUp.performed -= InvokeMoveUpEvent;
+            gameInput.MoveDown.performed -= InvokeMoveDownEvent;
         }
         
         private void BindUIInput(InputSystem_Actions.UIActions uiInput)
@@ -169,6 +177,26 @@ namespace Input
         private void InvokeInteractPerformedEvent(InputAction.CallbackContext obj)
         {
             _inputEventBus.OnInteractButtonPerformed?.Invoke();
+        }
+        
+        private void InvokeMoveLeftEvent(InputAction.CallbackContext obj)
+        {
+            _inputEventBus.OnMoveLeftButtonPerformed?.Invoke();
+        }
+        
+        private void InvokeMoveRightEvent(InputAction.CallbackContext obj)
+        {
+            _inputEventBus.OnMoveRightButtonPerformed?.Invoke();
+        }
+        
+        private void InvokeMoveUpEvent(InputAction.CallbackContext obj)
+        {
+            _inputEventBus.OnMoveUpButtonPerformed?.Invoke();
+        }
+
+        private void InvokeMoveDownEvent(InputAction.CallbackContext obj)
+        {
+            _inputEventBus.OnMoveDownButtonPerformed?.Invoke();
         }
 
         private void InvokeUIClickPerformedEvent(InputAction.CallbackContext obj)

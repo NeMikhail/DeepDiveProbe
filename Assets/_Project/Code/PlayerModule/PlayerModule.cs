@@ -7,15 +7,8 @@ namespace Player
         public override void Initialise()
         {
             base.Initialise();
-            InitializeSpawnAction();
             InitializeMovementActions();
-            InitializeCameraMovement();
-        }
-
-        private void InitializeSpawnAction()
-        {
-            PlayerSpawn playerSpawn = _di.Resolve<PlayerSpawn>();
-            _actions.Add(playerSpawn);
+            InitializeMapGeneration();
         }
 
         private void InitializeMovementActions()
@@ -24,12 +17,12 @@ namespace Player
                 _di.Resolve<PlayerMovementActions>();
             _actions.Add(playerMovement);
         }
-
-        private void InitializeCameraMovement()
+        
+        private void InitializeMapGeneration()
         {
-            CameraMovementActions cameraMovement =
-                _di.Resolve<CameraMovementActions>();
-            _actions.Add(cameraMovement);
+            MapGenerationActions mapGenerationActions =
+                _di.Resolve<MapGenerationActions>();
+            _actions.Add(mapGenerationActions);
         }
     }
 }

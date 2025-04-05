@@ -1,52 +1,189 @@
 ﻿using GameCoreModule;
 using MAEngine;
+using MAEngine.Extention;
 using UnityEngine;
 using Zenject;
 
 namespace Player
 {
-    public class PlayerMovementActions : IAction, IInitialisation, IFixedExecute
+    public class PlayerMovementActions : IAction, IInitialisation, ICleanUp, IFixedExecute
     {
         private SceneViewsContainer _sceneViewsContainer;
         private PlayerView _playerView;
         private InputEventBus _inputEvents;
         private PlayerConfig _playerConfig;
-        private Vector2 _movementVector;
-        private Vector2 _lastPosition;
+        private int _currentLine;
+        private int _currentLayer;
+        private int _targetLayer;
+        private MovementDirection _movementDirection;
+        private bool _isMoving;
+        private Timer _movementTimer;
+        private float _targetPositionX;
+        private float _startPositionX;
 
         [Inject]
         public void Construct(SceneViewsContainer sceneViewsContainer, InputEventBus inputEvents,
-            PlayerConfig playerConfig)
+            PlayerConfig playerConfig, PlayerView playerView)
         {
             _sceneViewsContainer = sceneViewsContainer;
             _inputEvents = inputEvents;
             _playerConfig = playerConfig;
+            _playerView = playerView;
         }
 
         public void Initialisation()
         {
-            _playerView = _sceneViewsContainer.GetPlayerView();
-            _inputEvents.OnMovementInputValueChanged += UpdateInputVector;
-            _lastPosition = _playerView.Object.transform.position;
+            _currentLine = 2;
+            _currentLayer = 2;
+            _inputEvents.OnMoveLeftButtonPerformed += TryMoveLeft;
+            _inputEvents.OnMoveRightButtonPerformed += TryMoveRight;
+            _inputEvents.OnMoveUpButtonPerformed += TryMoveUp;
+            _inputEvents.OnMoveDownButtonPerformed += TryMoveDown;
         }
-
-        private void UpdateInputVector(Vector2 movementVector)
+        
+        public void Cleanup()
         {
-            _movementVector = movementVector;
+            _inputEvents.OnMoveLeftButtonPerformed -= TryMoveLeft;
+            _inputEvents.OnMoveRightButtonPerformed -= TryMoveRight;
+            _inputEvents.OnMoveUpButtonPerformed -= TryMoveUp;
+            _inputEvents.OnMoveDownButtonPerformed -= TryMoveDown;
         }
 
         public void FixedExecute(float fixedDeltaTime)
         {
-            if (_movementVector != Vector2.zero)
+            if (_isMoving)
             {
-                _playerView.PlayerRB.AddForce(_movementVector * _playerConfig.Speed);
+                switch (_movementDirection)
+                {
+                    case MovementDirection.Left:
+                        MoveHorizontal();
+                        break;
+                    case MovementDirection.Right:
+                        MoveHorizontal();
+                        break;
+                    case MovementDirection.Up:
+                        MoveVertical();
+                        break;
+                    case MovementDirection.Down:
+                        MoveVertical();
+                        break;
+                }
             }
 
-            Vector2 antiInertia = (_lastPosition - 
-                (Vector2)_playerView.Object.transform.position)
-                * _playerConfig.InertiaModifier * 100f;
-            _lastPosition = (Vector2)_playerView.Object.transform.position;
-            _playerView.PlayerRB.AddForce(antiInertia);
+            MoveDown();
+        }
+
+        private void MoveDown()
+        {
+            _playerView.PlayerRB.linearVelocity =
+                new Vector2(_playerView.PlayerRB.linearVelocity.x, -1 * _playerConfig.Speed);
+        }
+
+        private void MoveVertical()
+        {
+            if (_movementTimer.Wait())
+            {
+                _isMoving = false;
+                _currentLayer = _targetLayer;
+                _playerView.CurrentLayer = _currentLayer;
+                _playerView.PlayerSpriteRenderer.sprite = _playerConfig.DefaultSprite;
+            }
+        }
+
+        private void MoveHorizontal()
+        {
+            if (_movementTimer.Wait())
+            {
+                _isMoving = false;
+                _playerView.CurrentLine = _currentLine;
+                _playerView.PlayerRB.linearVelocity =
+                    new Vector2(0, _playerView.PlayerRB.linearVelocity.y);
+                _playerView.PlayerRB.position = new Vector2(_targetPositionX, _playerView.PlayerRB.position.y);
+                _playerView.PlayerSpriteRenderer.sprite = _playerConfig.DefaultSprite;
+            }
+            else
+            {
+                float progress = 1f - (_movementTimer.GetRemainingTime() / _movementTimer.Duration);
+                float desiredX = Mathf.Lerp(_startPositionX, _targetPositionX, progress);
+                float velocityX = (desiredX - _playerView.PlayerRB.position.x) / Time.fixedDeltaTime;
+                _playerView.PlayerRB.linearVelocity = new Vector2(velocityX, _playerView.PlayerRB.linearVelocity.y);
+            }
+        }
+
+        private void TryMoveLeft()
+        {
+            if (!_isMoving)
+            {
+                if (_currentLine != 1)
+                {
+                    _currentLine--;
+                    _movementDirection = MovementDirection.Left;
+                    _movementTimer = new Timer(_playerConfig.LineChangingTime);
+                    _isMoving = true;
+                    if (_currentLine == 1)
+                    {
+                        _targetPositionX = _playerConfig.Line1PositionX;
+                    }
+                    else if(_currentLine == 2)
+                    {
+                        _targetPositionX = _playerConfig.Line2PositionX;
+                    }
+                    _startPositionX = _playerView.PlayerRB.position.x;
+                }
+            }
+        }
+        
+        private void TryMoveRight()
+        {
+            if (!_isMoving)
+            {
+                if (_currentLine != 3)
+                {
+                    _currentLine++;
+                    _movementDirection = MovementDirection.Right;
+                    _movementTimer = new Timer(_playerConfig.LineChangingTime);
+                    _isMoving = true;
+                    if (_currentLine == 3)
+                    {
+                        _targetPositionX = _playerConfig.Line3PositionX;
+                    }
+                    else if(_currentLine == 2)
+                    {
+                        _targetPositionX = _playerConfig.Line2PositionX;
+                    }
+                    _startPositionX = _playerView.PlayerRB.position.x;
+                }
+            }
+        }
+        
+        private void TryMoveUp()
+        {
+            if (!_isMoving)
+            {
+                if (_currentLayer != 3)
+                {
+                    _targetLayer = _currentLayer + 1;
+                    _movementDirection = MovementDirection.Up;
+                    _playerView.PlayerSpriteRenderer.sprite = _playerConfig.GoingUpSprite;
+                    _movementTimer = new Timer(_playerConfig.LayerChangingTime);
+                    _isMoving = true;
+                }
+            }
+        }
+        
+        private void TryMoveDown()
+        {
+            if (!_isMoving)
+            {
+                if (_currentLayer != 1)
+                {
+                    _targetLayer = _currentLayer - 1;
+                    _movementDirection = MovementDirection.Down;
+                    _playerView.PlayerSpriteRenderer.sprite = _playerConfig.GoingDownSprite;
+                    _movementTimer = new Timer(_playerConfig.LayerChangingTime);
+                    _isMoving = true;
+                }
+            }
         }
     }
 }
