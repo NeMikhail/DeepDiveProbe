@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,10 +15,12 @@ namespace UI
         [SerializeField] private Image _Layer3Image;
         [SerializeField] private Sprite _activeLayerSprite;
         [SerializeField] private Sprite _inactiveLayerSprite;
+        [SerializeField] private TMP_Text _depthText;
         
         public ButtonView PauseButton => _pauseButton;
         public Slider OxygenSlider => _oxygenSlider;
         public Slider DepthSlider => _depthSlider;
+        public TMP_Text DepthText => _depthText;
         
 
         public void InitializeView()

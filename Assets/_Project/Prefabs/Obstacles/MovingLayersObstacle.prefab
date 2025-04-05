@@ -8,9 +8,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2950956635095781125, guid: b23d182d540a78e4ab3f92502ed69660, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 8b7d672cba02e884e99d9e444c887c06, type: 3}
+    - target: {fileID: 4209951048516372770, guid: b23d182d540a78e4ab3f92502ed69660, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 8b7d672cba02e884e99d9e444c887c06, type: 3}
     - target: {fileID: 6629896565203831962, guid: b23d182d540a78e4ab3f92502ed69660, type: 3}
       propertyPath: m_Name
       value: MovingLayersObstacle
+      objectReference: {fileID: 0}
+    - target: {fileID: 6826149902742447674, guid: b23d182d540a78e4ab3f92502ed69660, type: 3}
+      propertyPath: m_Size.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6826149902742447674, guid: b23d182d540a78e4ab3f92502ed69660, type: 3}
+      propertyPath: m_Size.y
+      value: 1.9
       objectReference: {fileID: 0}
     - target: {fileID: 6904282883807781363, guid: b23d182d540a78e4ab3f92502ed69660, type: 3}
       propertyPath: m_Color.b

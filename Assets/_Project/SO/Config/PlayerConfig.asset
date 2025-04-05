@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df561d650d6f32640a2473e8bf5ccbcb, type: 3}
   m_Name: PlayerConfig
   m_EditorClassIdentifier: 
-  _speed: 2
-  _lineChangingTime: 0.5
-  _layerChangingTime: 1
+  _speed: 4
+  _lineChangingTime: 0.3
+  _layerChangingTime: 0.5
   _oxygenValue: 10
   _addingOxygenValue: 4
   _line1PositionX: -3

@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: ObstaclesSpawnConfig
   m_EditorClassIdentifier: 
   _stage1OxygenSpawnCount: 2
-  _stage2OxygenSpawnCount: 1
-  _stage3OxygenSpawnCount: 0.5
+  _stage2OxygenSpawnCount: 2
+  _stage3OxygenSpawnCount: 2
   _oxygenSpawnIndexes: 000000000200000005000000070000000a000000
   _stage1Obstacles: 0c0000000d0000000f000000
-  _stage2Obstacles: 0c0000000d000000100000000e000000
-  _stage3Obstacles: 0c00000011000000120000000e00000013000000
+  _stage2Obstacles: 0c000000110000001000000012000000
+  _stage3Obstacles: 0c000000110000000e0000001300000012000000

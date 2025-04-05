@@ -68,6 +68,7 @@ namespace UI
         private void UpdateDepthSlider(int depth)
         {
             _guiView.DepthSlider.value = depth;
+            _guiView.DepthText.text = $"{depth}m.";
         }
         
         private void SetPauseState()

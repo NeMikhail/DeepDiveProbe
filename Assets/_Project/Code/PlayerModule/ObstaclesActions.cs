@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using GameCoreModule;
 using MAEngine;
 using UnityEngine;
@@ -7,7 +8,7 @@ using Zenject;
 
 namespace Player
 {
-    public class ObstaclesActions : IAction, IInitialisation, ICleanUp
+    public class ObstaclesActions : IAction, IInitialisation, ICleanUp, IFixedExecute
     {
         private MapView _mapView;
         private GameEventBus _gameEventBus;
@@ -20,6 +21,11 @@ namespace Player
         private int _currentSpawnLineIndex;
         private int _layerActiveObject;
         private int _layerInactiveObject;
+        private List<ObstacleView> _movingObstacles;
+
+        private float _stageOxygenCount;
+        private List<PrefabID> _stageSpawnableObstacles;
+        
 
         [Inject]
         public void Construct(MapView mapView, GameEventBus gameEventBus, PlayerView playerView,
@@ -37,9 +43,11 @@ namespace Player
         {
             _obstacleLines = new Dictionary<int, ObstaclesLine>();
             _random = new System.Random();
+            _movingObstacles = new List<ObstacleView>();
             _layerActiveObject = LayerMask.NameToLayer("ActiveObstacle");
             _layerInactiveObject = LayerMask.NameToLayer("InactiveObstacle");
-            
+            _stageOxygenCount = _obstaclesSpawnConfig.Stage1OxygenSpawnCount;
+            _stageSpawnableObstacles = _obstaclesSpawnConfig.Stage1Obstacles;
             BindSpawnLinesTriggers(_mapView.Layer1View);
             _currentSpawnLineIndex = 0;
             SpawnObstaclesOnLine();
@@ -47,6 +55,187 @@ namespace Player
             SpawnObstaclesOnLine();
             _playerEventBus.OnTriggerSpawnLine += SpawnObstaclesOnLine;
             _playerEventBus.OnChangeLayer += ChangeCurrentLayerForObstacles;
+            _playerEventBus.OnStageChanged += ChangeStage;
+        }
+
+        public void Cleanup()
+        {
+            UnBindSpawnLinesTriggers(_mapView.Layer1View);
+            _playerEventBus.OnTriggerSpawnLine -= SpawnObstaclesOnLine;
+            _playerEventBus.OnChangeLayer -= ChangeCurrentLayerForObstacles;
+            _playerEventBus.OnStageChanged -= ChangeStage;
+        }
+        
+        public void FixedExecute(float fixedDeltaTime)
+        {
+            AddMovingObstacles();
+            MoveObstacles();
+        }
+        
+        private void ChangeStage(StageID stageID)
+        {
+            if (stageID == StageID.Stage1)
+            {
+                _stageOxygenCount = _obstaclesSpawnConfig.Stage1OxygenSpawnCount;
+                _stageSpawnableObstacles = _obstaclesSpawnConfig.Stage1Obstacles;
+            }
+            else if (stageID == StageID.Stage2)
+            {
+                _stageOxygenCount = _obstaclesSpawnConfig.Stage2OxygenSpawnCount;
+                _stageSpawnableObstacles = _obstaclesSpawnConfig.Stage2Obstacles;
+            }
+            else
+            {
+                _stageOxygenCount = _obstaclesSpawnConfig.Stage3OxygenSpawnCount;
+                _stageSpawnableObstacles = _obstaclesSpawnConfig.Stage3Obstacles;
+            }
+        }
+
+        private void MoveObstacles()
+        {
+            List<ObstacleView> obstaclesToRemove = new List<ObstacleView>();
+            foreach (ObstacleView obstacleView in _movingObstacles)
+            {
+                if (obstacleView.MovingTimer != null || obstacleView.IsStalking)
+                {
+                    obstacleView.Move();
+                }
+                else
+                {
+                    obstaclesToRemove.Add(obstacleView);
+                }
+            }
+            foreach (ObstacleView obstacleView in obstaclesToRemove)
+            {
+                _movingObstacles.Remove(obstacleView);
+            }
+        }
+
+        private void AddMovingObstacles()
+        {
+            foreach (ObstaclesLine line in _obstacleLines.Values)
+            {
+                foreach (ObstacleView obstacleView in line.Obstacles)
+                {
+                    switch (obstacleView.PrefabID)
+                    {
+                        case PrefabID.OxygenBubble:
+                            MoveObstacleUp(obstacleView, 1f);
+                            break;
+                        case PrefabID.MovingHorizontalObstacle:
+                            MoveObstacleHorizontal(obstacleView, 2f);
+                            break;
+                        case PrefabID.MovingVerticalUpObstacle:
+                            MoveObstacleUp(obstacleView, 1.5f);
+                            break;
+                        case PrefabID.MovingVerticalDownObstacle:
+                            MoveObstacleDown(obstacleView, 0.8f);
+                            break;
+                        case PrefabID.MovingChaoticVerticalObstacle:
+                            if (_random.Next(0, 2) == 1)
+                            {
+                                MoveObstacleUp(obstacleView, 3);
+                            }
+                            else
+                            {
+                                MoveObstacleDown(obstacleView, 1);
+                            }
+                            break;
+                        case PrefabID.MovingChaoticHorizontalObstacle:
+                            MoveObstacleHorizontalChaotic(obstacleView, 2.5f);
+                            break;
+                        case PrefabID.MovingLayersObstacle:
+                            MoveObstacleUp(obstacleView, 3);
+                        break;
+                        case PrefabID.StalkingObstacle:
+                            if (!obstacleView.IsStalking)
+                            {
+                                StartStalkingMovement(obstacleView, 1.5f);
+                            }
+                            break;
+                        default:
+                            break;
+                        
+                    }
+                }
+            }
+        }
+
+        private void StartStalkingMovement(ObstacleView obstacleView, float speed)
+        {
+            obstacleView.StartStalkMoving(speed, _playerView);
+            _movingObstacles.Add(obstacleView);
+        }
+
+        private void MoveObstacleHorizontalChaotic(ObstacleView obstacleView, float speed)
+        {
+            if (!_movingObstacles.Contains(obstacleView))
+            {
+                if (obstacleView.CurrentLine != 1 && obstacleView.CurrentLine != 3)
+                {
+                    if (_random.Next(0, 2) == 1)
+                    {
+                        obstacleView.Direction = MovementDirection.Right;
+                        obstacleView.SpriteRenderer.gameObject.transform.localScale = new Vector3(-1, 1, 1);
+                    }
+                    else
+                    {
+                        obstacleView.Direction = MovementDirection.Left;
+                        obstacleView.SpriteRenderer.gameObject.transform.localScale = Vector3.one;
+                    }
+                }
+                else if (obstacleView.CurrentLine == 1)
+                {
+                    obstacleView.Direction = MovementDirection.Right;
+                    obstacleView.SpriteRenderer.gameObject.transform.localScale = new Vector3(-1, 1, 1);
+                }
+                else if (obstacleView.CurrentLine == 3)
+                {
+                    obstacleView.Direction = MovementDirection.Left;
+                    obstacleView.SpriteRenderer.gameObject.transform.localScale = Vector3.one;
+                }
+                _movingObstacles.Add(obstacleView);
+                obstacleView.StartMoving(10 / speed);
+            }
+        }
+
+        private void MoveObstacleDown(ObstacleView obstacleView, float speed)
+        {
+            if (!_movingObstacles.Contains(obstacleView))
+            {
+                obstacleView.Direction = MovementDirection.Down;
+                _movingObstacles.Add(obstacleView);
+                obstacleView.StartMoving(10 / speed);
+            }
+        }
+
+        private void MoveObstacleUp(ObstacleView obstacleView, float speed)
+        {
+            if (!_movingObstacles.Contains(obstacleView))
+            {
+                obstacleView.Direction = MovementDirection.Up;
+                _movingObstacles.Add(obstacleView);
+                obstacleView.StartMoving(10 / speed);
+            }
+        }
+        
+        private void MoveObstacleHorizontal(ObstacleView obstacleView, float speed)
+        {
+            if (!_movingObstacles.Contains(obstacleView))
+            {
+                if (obstacleView.CurrentLine == 1)
+                {
+                    obstacleView.Direction = MovementDirection.Right;
+                    obstacleView.SpriteRenderer.gameObject.transform.localScale = new Vector3(-1, 1, 1);
+                }
+                else if (obstacleView.CurrentLine == 3)
+                {
+                    obstacleView.Direction = MovementDirection.Left;
+                    obstacleView.SpriteRenderer.gameObject.transform.localScale = Vector3.one;
+                }
+                _movingObstacles.Add(obstacleView);
+                obstacleView.StartMoving(10 / speed);
+            }
         }
 
         private void ChangeCurrentLayerForObstacles(int currentIndex)
@@ -104,13 +293,7 @@ namespace Player
             Color newColor = new Color(color.r, color.g, color.b, transperency);
             return newColor;
         }
-
-
-        public void Cleanup()
-        {
-            UnBindSpawnLinesTriggers(_mapView.Layer1View);
-            _playerEventBus.OnTriggerSpawnLine -= SpawnObstaclesOnLine;
-        }
+        
         
         private void BindSpawnLinesTriggers(LayerView layerView)
         {
@@ -159,8 +342,8 @@ namespace Player
                 float oxygenCount;
                 bool isOxygenSpawning = false;
                 
-                oxygenCount = _obstaclesSpawnConfig.Stage1OxygenSpawnCount;
-                spawnableObstacles = _obstaclesSpawnConfig.Stage1Obstacles;
+                oxygenCount = _stageOxygenCount;
+                spawnableObstacles = _stageSpawnableObstacles;
                 
                 if (oxygenCount < 1)
                 {
@@ -219,6 +402,7 @@ namespace Player
                 obstaclesLine.Obstacles = new List<ObstacleView>();
                 GameObjectSpawnCallback callback;
                 int layerId;
+                int lineid;
                 for (int i = 0; i < spawningPreset.Count; i++)
                 {
                     callback = new GameObjectSpawnCallback();
@@ -243,7 +427,8 @@ namespace Player
                             layerId = 3;
                             obstacleView.SpriteRenderer.sortingOrder = 1;
                         }
-                        obstacleView.SetObstacleData(layerId, spawningPreset[i], obstaclesLine.Obstacles);
+                        lineid = i % 3 + 1;
+                        obstacleView.SetObstacleData(layerId, spawningPreset[i], obstaclesLine.Obstacles,lineid);
                         obstacleView.Scene2DActor.TriggerEnter += OnObstacleEnter;
                         obstaclesLine.Obstacles.Add(obstacleView);
                     }
@@ -271,22 +456,14 @@ namespace Player
             List<PrefabID> spawnableObstacles)
         {
             List<PrefabID> spawningPreset = new List<PrefabID>();
-            bool isObstacleSpawned = false;
+            int obstacleSpawnIndex = 0;
+            obstacleSpawnIndex = _random.Next(0, 9);
+            while (oxygenSpawnIndexes.Contains(obstacleSpawnIndex))
+            {
+                obstacleSpawnIndex = _random.Next(0, 9);
+            }
             for (int i = 0; i < 9; i++)
             {
-                if (i == 0)
-                {
-                    isObstacleSpawned = false;
-                }
-                else if(i == 3)
-                {
-                    isObstacleSpawned = false;
-                }
-                else if (i == 6)
-                {
-                    isObstacleSpawned = false;
-                }
-                    
                 if (isOxygenSpawning)
                 {
                     if (oxygenSpawnIndexes.Contains(i))
@@ -296,29 +473,29 @@ namespace Player
                     }
                 }
                 PrefabID obstacleId = PrefabID.None;
-                if (!isObstacleSpawned)
+                if (obstacleSpawnIndex == i)
                 {
-                    if (_random.Next(0, 2) == 1)
-                    {
-                        int obstacleIndex = _random.Next(0, spawnableObstacles.Count);
-                        obstacleId = spawnableObstacles[obstacleIndex];
-                        isObstacleSpawned = true;
-                    }
-                    else if(i == 2 || i == 5 || i == 8)
-                    {
-                        int obstacleIndex = _random.Next(0, spawnableObstacles.Count);
-                        obstacleId = spawnableObstacles[obstacleIndex];
-                        isObstacleSpawned = true;
-                    }
+                    int obstacleIndex = _random.Next(0, spawnableObstacles.Count);
+                    obstacleId = spawnableObstacles[obstacleIndex];
                 }
                 spawningPreset.Add(obstacleId);
             }
             return spawningPreset;
         }
-
-
+        
         private void RemoveOldObstacles()
         {
+            int removingIndex = _currentSpawnLineIndex - 5;
+            List<ObstacleView> obstacleViews = _obstacleLines[removingIndex].Obstacles;
+            foreach (ObstacleView obstacleView in obstacleViews)
+            {
+                if (_movingObstacles.Contains(obstacleView))
+                {
+                    _movingObstacles.Remove(obstacleView);
+                }
+            }
+            _obstacleLines[removingIndex].RemoveAll();
+            _obstacleLines.Remove(removingIndex);
             //Debug.Log($"Obstacles removed on {_currentSpawnLineIndex - 5}");
         }
     }

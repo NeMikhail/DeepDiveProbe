@@ -26,6 +26,7 @@ namespace Player
             _playerEventBus.OnTriggerSpawnLine += RemoveOxygen;
             _playerEventBus.OnAddOxygen += AddOxygen;
             _playerEventBus.OnInteractWithObstacle += InteractWithObstacle;
+            _playerView.WinZoneActor.TriggerEnter += WinAction;
         }
 
         private void InteractWithObstacle(ObstacleView obstcle)
@@ -38,8 +39,7 @@ namespace Player
             }
             else
             {
-                _playerEventBus.OnGameOver?.Invoke();
-                Debug.LogError("GameOver");
+                RemoveOxygen(3);
             }
         }
 
@@ -47,6 +47,7 @@ namespace Player
         {
             _playerEventBus.OnTriggerSpawnLine -= RemoveOxygen;
             _playerEventBus.OnAddOxygen -= AddOxygen;
+            _playerView.WinZoneActor.TriggerEnter -= WinAction;
         }
 
         private void RemoveOxygen()
@@ -58,6 +59,23 @@ namespace Player
             }
             else
             {
+                _playerView.CurrentOxygen = 0;
+                _playerEventBus.OnOxygenChanged?.Invoke(_playerView.CurrentOxygen);
+                _playerEventBus.OnGameOver?.Invoke();
+                Debug.LogError("GameOver");
+            }
+        }
+        private void RemoveOxygen(int oxygenValue)
+        {
+            if (_playerView.CurrentOxygen > oxygenValue)
+            {
+                _playerView.CurrentOxygen -= oxygenValue;
+                _playerEventBus.OnOxygenChanged?.Invoke(_playerView.CurrentOxygen);
+            }
+            else
+            {
+                _playerView.CurrentOxygen = 0;
+                _playerEventBus.OnOxygenChanged?.Invoke(_playerView.CurrentOxygen);
                 _playerEventBus.OnGameOver?.Invoke();
                 Debug.LogError("GameOver");
             }
@@ -69,6 +87,15 @@ namespace Player
             {
                 _playerView.CurrentOxygen += _playerConfig.AddingOxygenValue;
                 _playerEventBus.OnOxygenChanged?.Invoke(_playerView.CurrentOxygen);
+            }
+        }
+        
+        private void WinAction(Scene2DActor actor, Collider2D collider)
+        {
+            if (_playerView.gameObject == collider.gameObject)
+            {
+                Debug.LogError("Win");
+                _playerEventBus.OnWin?.Invoke();
             }
         }
 

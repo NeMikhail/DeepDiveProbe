@@ -43,14 +43,16 @@ namespace Player
             _inputEvents.OnMoveRightButtonPerformed += TryMoveRight;
             _inputEvents.OnMoveUpButtonPerformed += TryMoveUp;
             _inputEvents.OnMoveDownButtonPerformed += TryMoveDown;
+            _playerEventBus.OnStageChanged += ChangeSpeed;
         }
-        
+
         public void Cleanup()
         {
             _inputEvents.OnMoveLeftButtonPerformed -= TryMoveLeft;
             _inputEvents.OnMoveRightButtonPerformed -= TryMoveRight;
             _inputEvents.OnMoveUpButtonPerformed -= TryMoveUp;
             _inputEvents.OnMoveDownButtonPerformed -= TryMoveDown;
+            _playerEventBus.OnStageChanged -= ChangeSpeed;
         }
 
         public void FixedExecute(float fixedDeltaTime)
@@ -76,12 +78,49 @@ namespace Player
 
             MoveDown();
         }
+        
+        private void ChangeSpeed(StageID stageID)
+        {
+            //Debug.LogWarning(stageID);
+            if (stageID == StageID.Stage1)
+            {
+                _playerView.CurrentSpeed = _playerConfig.Speed;
+            }
+            else if (stageID == StageID.Stage2)
+            {
+                _playerView.CurrentSpeed = _playerConfig.Speed * 1.3f;
+            }
+            else if (stageID == StageID.Stage3)
+            {
+                _playerView.CurrentSpeed = _playerConfig.Speed * 1.5f;
+            }
+        }
 
         private void MoveDown()
         {
             _playerView.PlayerRB.linearVelocity =
-                new Vector2(_playerView.PlayerRB.linearVelocity.x, -1 * _playerConfig.Speed);
-            _playerEventBus.OnDepthChanged?.Invoke(-(int)_playerView.transform.position.y);
+                new Vector2(_playerView.PlayerRB.linearVelocity.x, -1 * _playerView.CurrentSpeed);
+            int absDepth = (int)Mathf.Abs(_playerView.transform.position.y);
+            _playerEventBus.OnDepthChanged?.Invoke(absDepth);
+            StageID stageID = StageID.NONE;
+            if (absDepth < 400)
+            {
+                stageID = StageID.Stage1;
+            }
+            else if (absDepth < 800)
+            {
+                stageID = StageID.Stage2;
+            }
+            else
+            {
+                stageID = StageID.Stage3;
+            }
+
+            if (_playerView.CurrentStage != stageID)
+            {
+                _playerView.CurrentStage = stageID;
+                _playerEventBus.OnStageChanged?.Invoke(stageID);
+            }
         }
 
         private void MoveVertical()

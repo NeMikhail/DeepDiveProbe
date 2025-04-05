@@ -13,6 +13,7 @@ namespace GameCoreModule
         private Action<int> _onOxygenChanged;
         private Action<int> _onDepthChanged;
         private Action<ObstacleView> _onInteractWithObstacle;
+        private Action<StageID> _onStageChanged;
         private Action _onGameOver;
         private Action _onWin;
         
@@ -31,6 +32,8 @@ namespace GameCoreModule
         { get => _onDepthChanged; set => _onDepthChanged = value; }
         public Action<ObstacleView> OnInteractWithObstacle
         { get => _onInteractWithObstacle; set => _onInteractWithObstacle = value; }
+        public Action<StageID> OnStageChanged
+        { get => _onStageChanged; set => _onStageChanged = value; }
         public Action OnGameOver
         { get => _onGameOver; set => _onGameOver = value; }
         public Action OnWin

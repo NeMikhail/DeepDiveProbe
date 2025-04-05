@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Player
 {
@@ -10,6 +11,14 @@ namespace Player
         {
             get => _obstacles;
             set => _obstacles = value;
+        }
+
+        public void RemoveAll()
+        {
+            foreach (ObstacleView view in _obstacles)
+            {
+                GameObject.Destroy(view.gameObject);
+            }
         }
     }
 }
