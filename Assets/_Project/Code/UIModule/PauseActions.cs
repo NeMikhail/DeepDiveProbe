@@ -29,15 +29,30 @@ namespace UI
         
         public void Initialisation()
         {
+            _pauseUIView.SettingsRectTransform.gameObject.SetActive(false);
             _inputEventBus.OnAttackButtonCanceled += OnPointerUp;
+            _pauseUIView.ContinueButton.Button.onClick.AddListener(ContinueGame);
+            _pauseUIView.ExitButton.Button.onClick.AddListener(ExitGame);
+            _pauseUIView.SettingsButton.Button.onClick.AddListener(OpenSettings);
+            _pauseUIView.MusicSlider.onValueChanged.AddListener(MusicVolumeValueChanged);
+            _pauseUIView.SFXSlider.onValueChanged.AddListener(SFXVolumeValueChanged);
+            _pauseUIView.SettingsBackButton.Button.onClick.AddListener(CloseSettings);
+            _pauseUIView.SettingsApplyButton.Button.onClick.AddListener(ApplySettings);
         }
 
         public void Cleanup()
         {
             _inputEventBus.OnAttackButtonCanceled -= OnPointerUp;
+            _pauseUIView.ContinueButton.Button.onClick.RemoveListener(ContinueGame);
+            _pauseUIView.ExitButton.Button.onClick.RemoveListener(ExitGame);
+            _pauseUIView.SettingsButton.Button.onClick.RemoveListener(OpenSettings);
+            _pauseUIView.MusicSlider.onValueChanged.RemoveListener(MusicVolumeValueChanged);
+            _pauseUIView.SFXSlider.onValueChanged.RemoveListener(SFXVolumeValueChanged);
+            _pauseUIView.SettingsBackButton.Button.onClick.RemoveListener(CloseSettings);
+            _pauseUIView.SettingsApplyButton.Button.onClick.RemoveListener(ApplySettings);
         }
-        
-        
+
+
         public void OnPointerUp()
         {
             if (_musicVolumeChanged)
@@ -77,7 +92,6 @@ namespace UI
             _pauseUIView.SFXSlider.value = callback.SoundVolume;
             _currentMusicVolume = callback.MusicVolume;
             _currentSoundVolume = callback.SoundVolume;
-            
         }
 
         private void CloseSettings()

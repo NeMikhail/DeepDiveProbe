@@ -240,21 +240,10 @@ namespace Player
 
         private void ChangeCurrentLayerForObstacles(int currentIndex)
         {
-            if (currentIndex == 1)
-            {
-                _mapView.Layer1BlackObject.SetActive(false);
-                _mapView.Layer2BlackObject.SetActive(false);
-            }
-            else if (currentIndex == 2)
-            {
-                _mapView.Layer1BlackObject.SetActive(true);
-                _mapView.Layer2BlackObject.SetActive(false);
-            }
-            else if (currentIndex == 3)
-            {
-                _mapView.Layer1BlackObject.SetActive(true);
-                _mapView.Layer2BlackObject.SetActive(true);
-            }
+            Vector3 smallSize1 = new Vector3(0.8f, 0.8f, 1);
+            Vector3 smallSize2 = new Vector3(0.5f, 0.5f, 1);
+            Vector3 bigSize1 = new Vector3(1.2f, 1.2f, 1);
+            Vector3 bigSize2 = new Vector3(1.4f, 1.4f, 1);
             foreach (KeyValuePair<int, ObstaclesLine> obstaclesLine in _obstacleLines)
             {
                 List<ObstacleView> obstacleViews = obstaclesLine.Value.Obstacles;
@@ -263,26 +252,36 @@ namespace Player
                     if (obstacleView.LayerId == currentIndex)
                     {
                         obstacleView.ObstacleObject.layer = _layerActiveObject;
-                        obstacleView.SpriteRenderer.color =
-                            ChangeTransperency(obstacleView.SpriteRenderer.color, 1f);
+                        obstacleView.SpriteRenderer.color = Color.white;
+                        obstacleView.SpriteRenderer.gameObject.transform.localScale = Vector3.one;
                     }
                     else if (obstacleView.LayerId > currentIndex + 1)
                     {
                         obstacleView.ObstacleObject.layer = _layerInactiveObject;
+                        obstacleView.SpriteRenderer.color = Color.black;
                         obstacleView.SpriteRenderer.color =
                             ChangeTransperency(obstacleView.SpriteRenderer.color, 0.1f);
+                        obstacleView.SpriteRenderer.gameObject.transform.localScale = bigSize2;
                     }
                     else if(obstacleView.LayerId > currentIndex)
                     {
                         obstacleView.ObstacleObject.layer = _layerInactiveObject;
+                        obstacleView.SpriteRenderer.color = Color.gray;
                         obstacleView.SpriteRenderer.color =
                             ChangeTransperency(obstacleView.SpriteRenderer.color, 0.2f);
+                        obstacleView.SpriteRenderer.gameObject.transform.localScale = bigSize1;
                     }
-                    else
+                    else if(obstacleView.LayerId == currentIndex - 2)
                     {
                         obstacleView.ObstacleObject.layer = _layerInactiveObject;
-                        obstacleView.SpriteRenderer.color =
-                            ChangeTransperency(obstacleView.SpriteRenderer.color, 1f);
+                        obstacleView.SpriteRenderer.color = Color.black;
+                        obstacleView.SpriteRenderer.gameObject.transform.localScale = smallSize2;
+                    }
+                    else if(obstacleView.LayerId == currentIndex - 1)
+                    {
+                        obstacleView.ObstacleObject.layer = _layerInactiveObject;
+                        obstacleView.SpriteRenderer.color = Color.gray;
+                        obstacleView.SpriteRenderer.gameObject.transform.localScale = smallSize1;
                     }
                 }
             }

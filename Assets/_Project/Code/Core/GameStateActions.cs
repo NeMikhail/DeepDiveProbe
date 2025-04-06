@@ -9,15 +9,18 @@ namespace GameCoreModule
         private GameEventBus _gameEventBus;
         private InputEventBus _inputEventBus;
         private StateEventsBus _stateEventsBus;
+        private UIEventBus _uiEventBus;
         
         private GameState _currentGameState;
 
         [Inject]
-        public void Construct(GameEventBus gameEventBus, InputEventBus inputEventBus, StateEventsBus stateEventsBus)
+        public void Construct(GameEventBus gameEventBus, InputEventBus inputEventBus, StateEventsBus stateEventsBus,
+            UIEventBus uiEventBus)
         {
             _gameEventBus = gameEventBus;
             _inputEventBus = inputEventBus;
             _stateEventsBus = stateEventsBus;
+            _uiEventBus = uiEventBus;
         }
 
         public void Initialisation()
@@ -26,6 +29,7 @@ namespace GameCoreModule
             _stateEventsBus.OnPauseStateActivate += SetPauseState;
             _stateEventsBus.OnPlayStateActivate += SetPlayingState;
             _gameEventBus.OnGameOver += SetGameOverState;
+            _stateEventsBus.OnGetCurrentState += SendCurrentState;
             SetPlayingState();
         }
 
@@ -35,11 +39,21 @@ namespace GameCoreModule
             _stateEventsBus.OnPauseStateActivate -= SetPauseState;
             _stateEventsBus.OnPlayStateActivate -= SetPlayingState;
             _gameEventBus.OnGameOver -= SetGameOverState;
+            _stateEventsBus.OnGetCurrentState -= SendCurrentState;
+        }
+        
+        private void SendCurrentState(StateCallback callback)
+        {
+            callback.State = _currentGameState;
         }
 
         private void PauseButtonAction()
         {
-            _stateEventsBus.OnPlayStateActivate?.Invoke();
+            if (_currentGameState != GameState.PauseState)
+            {
+                _stateEventsBus.OnPauseStateActivate?.Invoke();
+                _uiEventBus.OnOpenPauseMenu?.Invoke();
+            }
         }
 
         private void SetPlayingState()

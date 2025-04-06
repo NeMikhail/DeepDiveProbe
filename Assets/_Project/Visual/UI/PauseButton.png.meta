@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 6f28f1dbcafe9da4ea4d32fd0840fa64
+guid: 2d936377b7f70e54dac89ac5799c9495
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1722518248691669260
-    second: UILayerActiveIndicator_0
+      213: -5113469029405553909
+    second: PauseButton_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -52,7 +52,7 @@ TextureImporter:
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
-  spriteBorder: {x: 16, y: 16, z: 16, w: 16}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
@@ -126,23 +126,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: UILayerActiveIndicator_0
+      name: PauseButton_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 200
-        height: 200
+        width: 250
+        height: 250
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4f6ea9377c26818e0800000000000000
-      internalID: -1722518248691669260
+      spriteID: b0b0254920f4909b0800000000000000
+      internalID: -5113469029405553909
       vertices: []
       indices: 
       edges: []
@@ -152,7 +152,7 @@ TextureImporter:
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
-    internalID: 1537655665
+    internalID: 0
     vertices: []
     indices: 
     edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      UILayerActiveIndicator_0: -1722518248691669260
+      PauseButton_0: -5113469029405553909
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

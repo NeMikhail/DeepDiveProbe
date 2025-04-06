@@ -13,4 +13,8 @@ MonoBehaviour:
   m_Name: AudioContainer
   m_EditorClassIdentifier: 
   _audioDict:
-    Dictionary: []
+    Dictionary:
+    - Key: 1
+      Value: {fileID: 8300000, guid: e8cf940d1be84994c8d8c1cd2bc68244, type: 3}
+    - Key: 3
+      Value: {fileID: 8300000, guid: 717b6517089914548b8ef0c5ad745f6a, type: 3}

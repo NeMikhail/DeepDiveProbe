@@ -35,6 +35,7 @@ namespace UI
             _playerEventBus.OnChangeLayer += ChangeLayerIndication;
             _playerEventBus.OnOxygenChanged += UpdateOxygenSlider;
             _playerEventBus.OnDepthChanged += UpdateDepthSlider;
+            _guiView.PauseButton.Button.onClick.AddListener(SetPauseState);
         }
 
         public void Cleanup()
@@ -42,6 +43,7 @@ namespace UI
             _playerEventBus.OnChangeLayer -= ChangeLayerIndication;
             _playerEventBus.OnOxygenChanged -= UpdateOxygenSlider;
             _playerEventBus.OnDepthChanged -= UpdateDepthSlider;
+            _guiView.PauseButton.Button.onClick.RemoveListener(SetPauseState);
         }
         
         public void FixedExecute(float fixedDeltaTime)
@@ -73,8 +75,14 @@ namespace UI
         
         private void SetPauseState()
         {
-            ClearGUI();
-            _stateEventsBus.OnPauseStateActivate?.Invoke();
+            StateCallback callback = new StateCallback();
+            _stateEventsBus.OnGetCurrentState?.Invoke(callback);
+            if (callback.State != GameState.PauseState)
+            {
+                ClearGUI();
+                _stateEventsBus.OnPauseStateActivate?.Invoke();
+                _uiEventBus.OnOpenPauseMenu?.Invoke();
+            }
         }
         
         private void ClearGUI()

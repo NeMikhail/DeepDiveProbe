@@ -10,15 +10,11 @@ namespace Player
         
         [SerializeField] private Transform _leftWallTransform;
         [SerializeField] private Transform _rightWallTransform;
-        [SerializeField] private GameObject _layer1BlackObject;
-        [SerializeField] private GameObject _layer2BlackObject;
         
         public LayerView Layer1View { get => _layer1View; }
         public LayerView Layer2View { get => _layer2View; }
         public LayerView Layer3View { get => _layer3View; }
         public Transform LeftWallTransform { get => _leftWallTransform; }
         public Transform RightWallTransform { get => _rightWallTransform; }
-        public GameObject Layer1BlackObject { get => _layer1BlackObject; }
-        public GameObject Layer2BlackObject { get => _layer2BlackObject; }
     }
 }
