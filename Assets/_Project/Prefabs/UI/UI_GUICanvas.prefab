@@ -5648,6 +5648,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4606454918542922700, guid: 505a2673c29f9a14792d88eac2b09451, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 076102f301b76f942afd48269b42148c, type: 3}
     - target: {fileID: 7246527040398968636, guid: 505a2673c29f9a14792d88eac2b09451, type: 3}
       propertyPath: m_text
       value: Shhh...Sh... The co*ne#*ion is u#$ta%le. G**# \@*k in the \@$t $t*g*.
@@ -7312,16 +7316,20 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4606454918542922700, guid: 505a2673c29f9a14792d88eac2b09451, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 076102f301b76f942afd48269b42148c, type: 3}
+    - target: {fileID: 4606454918542922700, guid: 505a2673c29f9a14792d88eac2b09451, type: 3}
       propertyPath: m_Color.b
-      value: 0.3490566
+      value: 0.35826805
       objectReference: {fileID: 0}
     - target: {fileID: 4606454918542922700, guid: 505a2673c29f9a14792d88eac2b09451, type: 3}
       propertyPath: m_Color.g
-      value: 0.3490566
+      value: 0.35826805
       objectReference: {fileID: 0}
     - target: {fileID: 4606454918542922700, guid: 505a2673c29f9a14792d88eac2b09451, type: 3}
       propertyPath: m_Color.r
-      value: 0.3490566
+      value: 0.9150943
       objectReference: {fileID: 0}
     - target: {fileID: 7246527040398968636, guid: 505a2673c29f9a14792d88eac2b09451, type: 3}
       propertyPath: m_text
