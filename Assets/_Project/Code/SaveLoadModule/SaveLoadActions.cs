@@ -29,6 +29,7 @@ namespace SaveLoad
             //_saveLoadEventBus.OnSavableDataChanged += SaveAllDataToPlayerPrefs;
             _saveLoadEventBus.OnSaveData += SaveAllDataToPlayerPrefs;
             _saveLoadEventBus.OnLoadData += LoadAllDataFromPlayerPrefs;
+            _saveLoadEventBus.OnClearProgress += ClearProgress;
             _saveLoadEventBus.OnLoadData?.Invoke();
         }
 
@@ -43,6 +44,13 @@ namespace SaveLoad
             //_saveLoadEventBus.OnSavableDataChanged -= SaveAllDataToPlayerPrefs;
             _saveLoadEventBus.OnSaveData -= SaveAllDataToPlayerPrefs;
             _saveLoadEventBus.OnLoadData -= LoadAllDataFromPlayerPrefs;
+            _saveLoadEventBus.OnClearProgress -= ClearProgress;
+        }
+        
+        private void ClearProgress()
+        {
+            PlayerPrefs.DeleteAll();
+            _savableDataContainer.CleanUp();;
         }
 
         public void SaveAllDataToPlayerPrefs()

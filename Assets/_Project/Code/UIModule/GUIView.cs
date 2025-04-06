@@ -1,7 +1,5 @@
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace UI
@@ -20,6 +18,11 @@ namespace UI
         [SerializeField] private Slider _bestDepthSlider;
         [SerializeField] private TMP_Text _bestDepthText;
         [SerializeField] private DialoguesView _dialoguesView;
+        [SerializeField] private GameObject _winScreenObject;
+        [SerializeField] private GameObject _loseScreenObject;
+        [SerializeField] private ButtonView _winRetryButton;
+        [SerializeField] private ButtonView _loseRetryButton;
+        [SerializeField] private ButtonView _winProgressClearButton;
         
         public ButtonView PauseButton => _pauseButton;
         public Slider OxygenSlider => _oxygenSlider;
@@ -28,6 +31,11 @@ namespace UI
         public Slider BestDepthSlider => _bestDepthSlider;
         public TMP_Text BestDepthText => _bestDepthText;
         public DialoguesView DialoguesView => _dialoguesView;
+        public GameObject WinScreenObject => _winScreenObject;
+        public GameObject LoseScreenObject => _loseScreenObject;
+        public ButtonView WinRetryButton => _winRetryButton;
+        public ButtonView LoseRetryButton => _loseRetryButton;
+        public ButtonView WinProgressClearButton => _winProgressClearButton;
         
 
         public void InitializeView()

@@ -11,6 +11,7 @@ namespace Input
         private InputSystem_Actions _controls;
         private InputEventBus _inputEventBus;
         private bool _isBinded;
+        
 
         private Vector2 _currentMovementVector;
 
@@ -28,6 +29,11 @@ namespace Input
             _inputEventBus.OnDisableInput += DisableInput;
             BindInput();
             _currentMovementVector = Vector2.zero;
+            bool isWebGLOnDesktop = !Application.isMobilePlatform
+                                    && Application.platform == RuntimePlatform.WebGLPlayer;
+
+            bool isWebGLOnMobile = Application.isMobilePlatform
+                                   && Application.platform == RuntimePlatform.WebGLPlayer;
         }
 
         public void Cleanup()

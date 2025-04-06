@@ -382,6 +382,7 @@ namespace Player
             foreach (SpawnZonesView spawnZonesView in layerView.SpawnZones)
             {
                 spawnZonesView.SpawnLineActor.TriggerEnter += TriggerSpawnLine;
+                spawnZonesView.SpawnLineActor.TriggerExit += TriggerLineExit;
             }
         }
         
@@ -390,6 +391,15 @@ namespace Player
             foreach (SpawnZonesView spawnZonesView in layerView.SpawnZones)
             {
                 spawnZonesView.SpawnLineActor.TriggerEnter -= TriggerSpawnLine;
+                spawnZonesView.SpawnLineActor.TriggerExit -= TriggerLineExit;
+            }
+        }
+
+        private void TriggerLineExit(Scene2DActor scene2DActor, Collider2D collider)
+        {
+            if (collider.gameObject == _playerView.gameObject)
+            {
+                _playerEventBus.OnTriggerLineExit?.Invoke();
             }
         }
 

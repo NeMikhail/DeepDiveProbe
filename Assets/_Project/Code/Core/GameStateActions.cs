@@ -28,7 +28,8 @@ namespace GameCoreModule
             _inputEventBus.OnPauseButtonPerformed += PauseButtonAction;
             _stateEventsBus.OnPauseStateActivate += SetPauseState;
             _stateEventsBus.OnPlayStateActivate += SetPlayingState;
-            _gameEventBus.OnGameOver += SetGameOverState;
+            _gameEventBus.OnGameOver += SetPauseState;
+            _gameEventBus.OnWin += SetPauseState;
             _stateEventsBus.OnGetCurrentState += SendCurrentState;
             SetPlayingState();
         }
@@ -38,7 +39,8 @@ namespace GameCoreModule
             _inputEventBus.OnPauseButtonPerformed -= PauseButtonAction;
             _stateEventsBus.OnPauseStateActivate -= SetPauseState;
             _stateEventsBus.OnPlayStateActivate -= SetPlayingState;
-            _gameEventBus.OnGameOver -= SetGameOverState;
+            _gameEventBus.OnGameOver -= SetPauseState;
+            _gameEventBus.OnWin -= SetPauseState;
             _stateEventsBus.OnGetCurrentState -= SendCurrentState;
         }
         

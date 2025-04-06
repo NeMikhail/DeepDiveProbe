@@ -128,7 +128,7 @@ namespace UI
 
         private void CheckMusicVolume()
         {
-            _audioEventBus.OnPlayMusic?.Invoke(AudioResourceID.Sound_Test);
+            _audioEventBus.OnPlayMusicOneShot?.Invoke(AudioResourceID.Sound_Test, 1f);
         }
     }
 }

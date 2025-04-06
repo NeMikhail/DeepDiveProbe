@@ -7,6 +7,7 @@ namespace GameCoreModule
         private Action _onSavableDataChanged;
         private Action _onSaveData;
         private Action _onLoadData;
+        private Action _onClearProgress;
 
         private Action<SaveDataKey, int> _onSaveInt;
         private Action<SaveDataKey, float> _onSaveFloat;
@@ -23,6 +24,8 @@ namespace GameCoreModule
         { get => _onSaveData; set => _onSaveData = value; }
         public Action OnLoadData
         { get => _onLoadData; set => _onLoadData = value; }
+        public Action OnClearProgress
+        { get => _onClearProgress; set => _onClearProgress = value; }
         
         public Action<SaveDataKey, int> OnSaveInt
         { get => _onSaveInt; set => _onSaveInt = value; }

@@ -8,7 +8,6 @@ namespace Player
 {
     public class PlayerMovementActions : IAction, IInitialisation, ICleanUp, IFixedExecute
     {
-        private SceneViewsContainer _sceneViewsContainer;
         private PlayerView _playerView;
         private InputEventBus _inputEvents;
         private PlayerConfig _playerConfig;
@@ -26,11 +25,10 @@ namespace Player
         private bool _isPlayingState;
 
         [Inject]
-        public void Construct(SceneViewsContainer sceneViewsContainer, InputEventBus inputEvents,
+        public void Construct(InputEventBus inputEvents,
             PlayerConfig playerConfig, PlayerView playerView, PlayerEventBus playerEventBus,
             GameEventBus gameEventBus)
         {
-            _sceneViewsContainer = sceneViewsContainer;
             _inputEvents = inputEvents;
             _playerConfig = playerConfig;
             _playerView = playerView;

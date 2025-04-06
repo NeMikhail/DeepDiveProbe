@@ -11,22 +11,26 @@ namespace Player
         private PlayerConfig _playerConfig;
         private PlayerEventBus _playerEventBus;
         private SaveLoadEventBus _saveLoadEventBus;
+        private AudioEventBus _audioEventBus;
+        private GameEventBus _gameEventBus;
 
         [Inject]
         public void Construct(PlayerView playerView, PlayerConfig playerConfig, PlayerEventBus playerEventBus,
-            SaveLoadEventBus saveLoadEventBus)
+            SaveLoadEventBus saveLoadEventBus, AudioEventBus audioEventBus, GameEventBus gameEventBus)
         {
             _playerView = playerView;
             _playerConfig = playerConfig;
             _playerEventBus = playerEventBus;
             _saveLoadEventBus = saveLoadEventBus;
+            _audioEventBus = audioEventBus;
+            _gameEventBus = gameEventBus;
         }
 
 
         public void Initialisation()
         {
             _playerView.CurrentOxygen = _playerConfig.OxygenValue;
-            _playerEventBus.OnTriggerSpawnLine += RemoveOxygen;
+            _playerEventBus.OnTriggerLineExit += RemoveOxygen;
             _playerEventBus.OnAddOxygen += AddOxygen;
             _playerEventBus.OnInteractWithObstacle += InteractWithObstacle;
             _playerView.WinZoneActor.TriggerEnter += WinAction;
@@ -48,8 +52,9 @@ namespace Player
 
         public void Cleanup()
         {
-            _playerEventBus.OnTriggerSpawnLine -= RemoveOxygen;
+            _playerEventBus.OnTriggerLineExit -= RemoveOxygen;
             _playerEventBus.OnAddOxygen -= AddOxygen;
+            _playerEventBus.OnInteractWithObstacle -= InteractWithObstacle;
             _playerView.WinZoneActor.TriggerEnter -= WinAction;
         }
 
@@ -69,8 +74,9 @@ namespace Player
                 _playerView.CurrentOxygen = 0;
                 _playerEventBus.OnOxygenChanged?.Invoke(_playerView.CurrentOxygen);
                 TryRewriteBestResult();
-                _playerEventBus.OnGameOver?.Invoke();
-                Debug.LogError("GameOver");
+                _audioEventBus.OnPlaySound?.Invoke(AudioResourceID.Sound_Death);
+                _audioEventBus.OnStopMusicAndEnvSound?.Invoke();
+                _gameEventBus.OnGameOver?.Invoke();
             }
         }
 
@@ -93,6 +99,7 @@ namespace Player
 
         private void AddOxygen()
         {
+            _audioEventBus.OnPlaySound?.Invoke(AudioResourceID.Sound_OxygenPickup);
             if (_playerView.CurrentOxygen < _playerConfig.OxygenValue)
             {
                 _playerView.CurrentOxygen += _playerConfig.AddingOxygenValue;
@@ -104,8 +111,8 @@ namespace Player
         {
             if (_playerView.gameObject == collider.gameObject)
             {
-                Debug.LogError("Win");
-                _playerEventBus.OnWin?.Invoke();
+                _audioEventBus.OnPlaySound?.Invoke(AudioResourceID.Sound_Win);
+                _gameEventBus.OnWin?.Invoke();
             }
         }
 

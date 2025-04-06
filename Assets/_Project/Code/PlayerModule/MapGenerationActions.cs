@@ -58,7 +58,7 @@ namespace Player
             PrefabID rightWallId = PrefabID.None;
             float ypos = 0;
             Vector2 position = Vector2.zero;
-            for (int i = 0; i < 120; i++)
+            for (int i = 0; i < 122; i++)
             {
                 int wallIndex = _random.Next(0, 4);
                 while (wallIndex == _lastLeftWallId)

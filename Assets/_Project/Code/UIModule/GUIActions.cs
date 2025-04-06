@@ -3,6 +3,7 @@ using GameCoreModule;
 using MAEngine;
 using MAEngine.Extention;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Zenject;
 
 namespace UI
@@ -17,15 +18,15 @@ namespace UI
         private UIEventBus _uiEventBus;
         private SaveLoadEventBus _saveLoadEventBus;
         private InputEventBus _inputEventBus;
+        private GameEventBus _gameEventBus;
 
         private DialogueView _activeDialogue;
         private Timer _dialogueTimer;
-        private int _dialogueActiveTime;
-        private int _dialoguePhraseTime;
 
         [Inject]
         public void Construct(GUIView guiView, StateEventsBus stateEventsBus, PlayerEventBus playerEventBus,
-            UIEventBus uiEventBus, SaveLoadEventBus saveLoadEventBus, InputEventBus inputEventBus)
+            UIEventBus uiEventBus, SaveLoadEventBus saveLoadEventBus, InputEventBus inputEventBus, 
+            GameEventBus gameEventBus)
         {
             _guiView = guiView;
             _stateEventsBus = stateEventsBus;
@@ -33,6 +34,7 @@ namespace UI
             _uiEventBus = uiEventBus;
             _saveLoadEventBus = saveLoadEventBus;
             _inputEventBus = inputEventBus;
+            _gameEventBus = gameEventBus;
         }
         
         public void PreInitialisation()
@@ -48,9 +50,14 @@ namespace UI
             _playerEventBus.OnStageChanged += StartStageDialogue;
             _guiView.PauseButton.Button.onClick.AddListener(SetPauseState);
             _inputEventBus.OnJumpButtonPerformed += SkipPhrase;
+            _gameEventBus.OnWin += SetWinScreen;
+            _gameEventBus.OnGameOver += SetLoseScreen;
+            _guiView.WinRetryButton.Button.onClick.AddListener(ReloadScene);
+            _guiView.LoseRetryButton.Button.onClick.AddListener(ReloadScene);
+            _guiView.WinProgressClearButton.Button.onClick.AddListener(ClearProgress);
             LoadBestDepth();
         }
-        
+
         public void Cleanup()
         {
             _playerEventBus.OnChangeLayer -= ChangeLayerIndication;
@@ -59,17 +66,20 @@ namespace UI
             _playerEventBus.OnStageChanged -= StartStageDialogue;
             _guiView.PauseButton.Button.onClick.RemoveListener(SetPauseState);
             _inputEventBus.OnJumpButtonPerformed -= SkipPhrase;
+            _gameEventBus.OnWin -= SetWinScreen;
+            _gameEventBus.OnGameOver -= SetLoseScreen;
+            _guiView.WinRetryButton.Button.onClick.RemoveListener(ReloadScene);
+            _guiView.LoseRetryButton.Button.onClick.RemoveListener(ReloadScene);
+            _guiView.WinProgressClearButton.Button.onClick.RemoveListener(ClearProgress);
         }
         
         public void LateExecute(float fixedDeltaTime)
         {
-            _dialogueActiveTime++;
             if (_activeDialogue != null)
             {
                 if (_dialogueTimer.Wait())
                 {
                     _activeDialogue.NextPhrase();
-                    _dialogueActiveTime = 0;
                     CheckDialogueEnd();
                 }
             }
@@ -81,7 +91,6 @@ namespace UI
             {
                 _activeDialogue.NextPhrase();
                 _dialogueTimer = new Timer(DIALOGUE_DELAY);
-                _dialogueActiveTime = 0;
                 CheckDialogueEnd();
             }
         }
@@ -93,7 +102,6 @@ namespace UI
                 _activeDialogue = null;
                 _dialogueTimer = null;
                 _stateEventsBus?.OnPlayStateActivate?.Invoke();
-                _dialogueActiveTime = 0;
             }
         }
         
@@ -118,7 +126,6 @@ namespace UI
                 _activeDialogue.SetChangableText((int)_guiView.BestDepthSlider.value);
             }
 
-            _dialoguePhraseTime = (int)(DIALOGUE_DELAY * 500);
             _dialogueTimer = new Timer(DIALOGUE_DELAY);
         }
         
@@ -169,6 +176,28 @@ namespace UI
         private void ClearGUI()
         {
             
+        }
+        
+        private void ClearProgress()
+        {
+            _saveLoadEventBus?.OnClearProgress.Invoke();
+        }
+
+        private void ReloadScene()
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+
+        private void SetLoseScreen()
+        {
+            _guiView.LoseScreenObject.SetActive(true);
+            _inputEventBus.OnDisableInput?.Invoke();
+        }
+
+        private void SetWinScreen()
+        {
+            _guiView.WinScreenObject.SetActive(true);
+            _inputEventBus.OnDisableInput?.Invoke();
         }
     }
 }
