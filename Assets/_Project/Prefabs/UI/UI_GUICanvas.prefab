@@ -1855,7 +1855,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5401168480078400599}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1864,11 +1864,11 @@ RectTransform:
   - {fileID: 5436151743330605019}
   - {fileID: 3318082973989631473}
   - {fileID: 640503454276625538}
-  m_Father: {fileID: 4396983580826792739}
+  m_Father: {fileID: 1377694665286641906}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -10, y: -30}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -180}
   m_SizeDelta: {x: 80, y: 160}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4629397828220956200
@@ -4657,15 +4657,15 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5355873853032844920, guid: 2d4333e4ccaeb8049b7b88ec47ae5eca, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7779749649040672880}
+    - targetCorrespondingSourceObject: {fileID: 4765117641491978162, guid: 2d4333e4ccaeb8049b7b88ec47ae5eca, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7538420953224993661}
     - targetCorrespondingSourceObject: {fileID: 2728238140309241454, guid: 2d4333e4ccaeb8049b7b88ec47ae5eca, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4732950642398709051}
     - targetCorrespondingSourceObject: {fileID: 7798736493117705315, guid: 2d4333e4ccaeb8049b7b88ec47ae5eca, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3020990542839817800}
-    - targetCorrespondingSourceObject: {fileID: 7798736493117705315, guid: 2d4333e4ccaeb8049b7b88ec47ae5eca, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 7538420953224993661}
     - targetCorrespondingSourceObject: {fileID: 432808201190664878, guid: 2d4333e4ccaeb8049b7b88ec47ae5eca, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7102216407773991498}
@@ -4686,6 +4686,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 4174847897041908124}
   m_SourcePrefab: {fileID: 100100000, guid: 2d4333e4ccaeb8049b7b88ec47ae5eca, type: 3}
+--- !u!224 &1377694665286641906 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 4765117641491978162, guid: 2d4333e4ccaeb8049b7b88ec47ae5eca, type: 3}
+  m_PrefabInstance: {fileID: 5854561593552011072}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &1395869577778705085 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4782975895743352317, guid: 2d4333e4ccaeb8049b7b88ec47ae5eca, type: 3}
