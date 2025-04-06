@@ -10,13 +10,16 @@ namespace Player
         private PlayerView _playerView;
         private PlayerConfig _playerConfig;
         private PlayerEventBus _playerEventBus;
+        private SaveLoadEventBus _saveLoadEventBus;
 
         [Inject]
-        public void Construct(PlayerView playerView, PlayerConfig playerConfig, PlayerEventBus playerEventBus)
+        public void Construct(PlayerView playerView, PlayerConfig playerConfig, PlayerEventBus playerEventBus,
+            SaveLoadEventBus saveLoadEventBus)
         {
             _playerView = playerView;
             _playerConfig = playerConfig;
             _playerEventBus = playerEventBus;
+            _saveLoadEventBus = saveLoadEventBus;
         }
 
 
@@ -52,18 +55,7 @@ namespace Player
 
         private void RemoveOxygen()
         {
-            if (_playerView.CurrentOxygen > 0)
-            {
-                _playerView.CurrentOxygen--;
-                _playerEventBus.OnOxygenChanged?.Invoke(_playerView.CurrentOxygen);
-            }
-            else
-            {
-                _playerView.CurrentOxygen = 0;
-                _playerEventBus.OnOxygenChanged?.Invoke(_playerView.CurrentOxygen);
-                _playerEventBus.OnGameOver?.Invoke();
-                Debug.LogError("GameOver");
-            }
+            RemoveOxygen(1);
         }
         private void RemoveOxygen(int oxygenValue)
         {
@@ -76,8 +68,26 @@ namespace Player
             {
                 _playerView.CurrentOxygen = 0;
                 _playerEventBus.OnOxygenChanged?.Invoke(_playerView.CurrentOxygen);
+                TryRewriteBestResult();
                 _playerEventBus.OnGameOver?.Invoke();
                 Debug.LogError("GameOver");
+            }
+        }
+
+        private void TryRewriteBestResult()
+        {
+            int absDepth = Mathf.Abs(_playerView.CurrentDepth);
+            SavableInt loadedDepth = new SavableInt();
+            _saveLoadEventBus.OnGetInt?.Invoke(SaveDataKey.BestDepth, loadedDepth);
+            int bestDepth = 0;
+            if (loadedDepth.IsLoaded)
+            {
+                bestDepth = loadedDepth.Value;
+            }
+            if (absDepth > bestDepth)
+            {
+                _saveLoadEventBus.OnSaveInt?.Invoke(SaveDataKey.BestDepth, absDepth);
+                _saveLoadEventBus.OnSaveData?.Invoke();
             }
         }
 

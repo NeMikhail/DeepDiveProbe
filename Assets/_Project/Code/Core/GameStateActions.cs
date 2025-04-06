@@ -60,8 +60,8 @@ namespace GameCoreModule
         {
             if (_currentGameState != GameState.PlayState)
             {
-                Time.timeScale = 1f;
-                _inputEventBus.OnEnableInput?.Invoke();
+                //Time.timeScale = 1f;
+                //_inputEventBus.OnEnableInput?.Invoke();
                 _currentGameState = GameState.PlayState;
                 _gameEventBus.OnStateChanged?.Invoke(_currentGameState);
             }
@@ -70,8 +70,8 @@ namespace GameCoreModule
         {
             if (_currentGameState != GameState.PauseState)
             {
-                Time.timeScale = 0f;
-                _inputEventBus.OnDisableInput?.Invoke();
+                //Time.timeScale = 0f;
+                //_inputEventBus.OnDisableInput?.Invoke();
                 _currentGameState = GameState.PauseState;
                 _gameEventBus.OnStateChanged?.Invoke(_currentGameState);
             }

@@ -93,8 +93,10 @@ namespace SaveLoad
             {
                 savable.SetValue(_savableInts[key]);
             }
-
-            //Debug.LogWarning($"No int saved by key {key}");
+            else
+            {
+                //Debug.LogWarning($"No int saved by key {key}");
+            }
         }
         
         private void LoadData(SaveDataKey key, SavableFloat savable)

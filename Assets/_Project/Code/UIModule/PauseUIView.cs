@@ -24,6 +24,5 @@ namespace UI
         public Slider SFXSlider => _sfxSlider;
         public ButtonView SettingsApplyButton => _settingsApplyButton;
         public ButtonView SettingsBackButton => _settingsBackButton;
-
     }
 }

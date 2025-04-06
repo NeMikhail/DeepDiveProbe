@@ -130,6 +130,10 @@ namespace Player
                 _rigidbody2D.linearVelocity = new Vector2(velocityX, velocityY);
             }
         }
+        public void Stop()
+        {
+            _rigidbody2D.linearVelocity = Vector2.zero;
+        }
 
         private void OnDestroy()
         {

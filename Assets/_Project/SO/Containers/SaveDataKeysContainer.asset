@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 885bcf0f6aa34b458a89f903ea02351e, type: 3}
   m_Name: SaveDataKeysContainer
   m_EditorClassIdentifier: 
-  _savableIntKeys: 
+  _savableIntKeys: 03000000
   _savableFloatKeys: 0100000002000000
   _savableStringKeys: 

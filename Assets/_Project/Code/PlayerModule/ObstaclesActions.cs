@@ -22,6 +22,7 @@ namespace Player
         private int _layerActiveObject;
         private int _layerInactiveObject;
         private List<ObstacleView> _movingObstacles;
+        private bool _isPlaying;
 
         private float _stageOxygenCount;
         private List<PrefabID> _stageSpawnableObstacles;
@@ -56,6 +57,8 @@ namespace Player
             _playerEventBus.OnTriggerSpawnLine += SpawnObstaclesOnLine;
             _playerEventBus.OnChangeLayer += ChangeCurrentLayerForObstacles;
             _playerEventBus.OnStageChanged += ChangeStage;
+            _gameEventBus.OnStateChanged += ChangeState;
+            _isPlaying = true;
         }
 
         public void Cleanup()
@@ -64,12 +67,32 @@ namespace Player
             _playerEventBus.OnTriggerSpawnLine -= SpawnObstaclesOnLine;
             _playerEventBus.OnChangeLayer -= ChangeCurrentLayerForObstacles;
             _playerEventBus.OnStageChanged -= ChangeStage;
+            _gameEventBus.OnStateChanged -= ChangeState;
         }
         
         public void FixedExecute(float fixedDeltaTime)
         {
-            AddMovingObstacles();
-            MoveObstacles();
+            if (_isPlaying)
+            {
+                AddMovingObstacles();
+                MoveObstacles();
+            }
+            else
+            {
+                StopMovables();
+            }
+        }
+
+        private void ChangeState(GameState state)
+        {
+            if (state == GameState.PlayState)
+            {
+                _isPlaying = true;
+            }
+            else
+            {
+                _isPlaying = false;
+            }
         }
         
         private void ChangeStage(StageID stageID)
@@ -108,6 +131,17 @@ namespace Player
             foreach (ObstacleView obstacleView in obstaclesToRemove)
             {
                 _movingObstacles.Remove(obstacleView);
+            }
+        }
+        
+        private void StopMovables()
+        {
+            foreach (ObstacleView obstacleView in _movingObstacles)
+            {
+                if (obstacleView.MovingTimer != null || obstacleView.IsStalking)
+                {
+                    obstacleView.Stop();
+                }
             }
         }
 
@@ -175,24 +209,40 @@ namespace Player
                 {
                     if (_random.Next(0, 2) == 1)
                     {
+                        MovementDirection lastDirection = obstacleView.Direction;
                         obstacleView.Direction = MovementDirection.Right;
-                        obstacleView.SpriteRenderer.gameObject.transform.localScale = new Vector3(-1, 1, 1);
+                        if (lastDirection != obstacleView.Direction)
+                        {
+                            ChangeDirection(obstacleView);
+                        }
                     }
                     else
                     {
+                        MovementDirection lastDirection = obstacleView.Direction;
                         obstacleView.Direction = MovementDirection.Left;
-                        obstacleView.SpriteRenderer.gameObject.transform.localScale = Vector3.one;
+                        if (lastDirection != obstacleView.Direction)
+                        {
+                            ChangeDirection(obstacleView);
+                        }
                     }
                 }
                 else if (obstacleView.CurrentLine == 1)
                 {
+                    MovementDirection lastDirection = obstacleView.Direction;
                     obstacleView.Direction = MovementDirection.Right;
-                    obstacleView.SpriteRenderer.gameObject.transform.localScale = new Vector3(-1, 1, 1);
+                    if (lastDirection != obstacleView.Direction)
+                    {
+                        ChangeDirection(obstacleView);
+                    }
                 }
                 else if (obstacleView.CurrentLine == 3)
                 {
+                    MovementDirection lastDirection = obstacleView.Direction;
                     obstacleView.Direction = MovementDirection.Left;
-                    obstacleView.SpriteRenderer.gameObject.transform.localScale = Vector3.one;
+                    if (lastDirection != obstacleView.Direction)
+                    {
+                        ChangeDirection(obstacleView);
+                    }
                 }
                 _movingObstacles.Add(obstacleView);
                 obstacleView.StartMoving(10 / speed);
@@ -225,17 +275,33 @@ namespace Player
             {
                 if (obstacleView.CurrentLine == 1)
                 {
+                    MovementDirection lastDirection = obstacleView.Direction;
                     obstacleView.Direction = MovementDirection.Right;
-                    obstacleView.SpriteRenderer.gameObject.transform.localScale = new Vector3(-1, 1, 1);
+                    if (lastDirection != obstacleView.Direction)
+                    {
+                        ChangeDirection(obstacleView);
+                    }
+
                 }
                 else if (obstacleView.CurrentLine == 3)
                 {
+                    MovementDirection lastDirection = obstacleView.Direction;
                     obstacleView.Direction = MovementDirection.Left;
-                    obstacleView.SpriteRenderer.gameObject.transform.localScale = Vector3.one;
+                    if (lastDirection != obstacleView.Direction)
+                    {
+                        ChangeDirection(obstacleView);
+                    }
                 }
                 _movingObstacles.Add(obstacleView);
                 obstacleView.StartMoving(10 / speed);
             }
+        }
+
+        private void ChangeDirection(ObstacleView obstacleView)
+        {
+            Vector3 currentScale = obstacleView.SpriteRenderer.gameObject.transform.localScale;
+            obstacleView.SpriteRenderer.gameObject.transform.localScale =
+                new Vector3(-1 * currentScale.x, currentScale.y, currentScale.z);
         }
 
         private void ChangeCurrentLayerForObstacles(int currentIndex)
@@ -249,11 +315,21 @@ namespace Player
                 List<ObstacleView> obstacleViews = obstaclesLine.Value.Obstacles;
                 foreach (ObstacleView obstacleView in obstacleViews)
                 {
+                    Vector3 scaleMultipler = Vector3.one;
+                    if (obstacleView.SpriteRenderer.gameObject.transform.localScale.x > 0)
+                    {
+                        scaleMultipler = Vector3.one;
+                    }
+                    else
+                    {
+                        scaleMultipler = new Vector3(-1, 1, 1);
+                    }
                     if (obstacleView.LayerId == currentIndex)
                     {
                         obstacleView.ObstacleObject.layer = _layerActiveObject;
                         obstacleView.SpriteRenderer.color = Color.white;
-                        obstacleView.SpriteRenderer.gameObject.transform.localScale = Vector3.one;
+                        Vector3 scale = new Vector3(scaleMultipler.x, scaleMultipler.y, scaleMultipler.z);
+                        obstacleView.SpriteRenderer.gameObject.transform.localScale = scale;
                     }
                     else if (obstacleView.LayerId > currentIndex + 1)
                     {
@@ -261,7 +337,9 @@ namespace Player
                         obstacleView.SpriteRenderer.color = Color.black;
                         obstacleView.SpriteRenderer.color =
                             ChangeTransperency(obstacleView.SpriteRenderer.color, 0.1f);
-                        obstacleView.SpriteRenderer.gameObject.transform.localScale = bigSize2;
+                        Vector3 scale = new Vector3(scaleMultipler.x * bigSize2.x,
+                            scaleMultipler.y * bigSize2.y, scaleMultipler.z * bigSize2.z);
+                        obstacleView.SpriteRenderer.gameObject.transform.localScale = scale;
                     }
                     else if(obstacleView.LayerId > currentIndex)
                     {
@@ -269,19 +347,25 @@ namespace Player
                         obstacleView.SpriteRenderer.color = Color.gray;
                         obstacleView.SpriteRenderer.color =
                             ChangeTransperency(obstacleView.SpriteRenderer.color, 0.2f);
-                        obstacleView.SpriteRenderer.gameObject.transform.localScale = bigSize1;
+                        Vector3 scale = new Vector3(scaleMultipler.x * bigSize1.x,
+                            scaleMultipler.y * bigSize1.y, scaleMultipler.z * bigSize1.z);
+                        obstacleView.SpriteRenderer.gameObject.transform.localScale = scale;
                     }
                     else if(obstacleView.LayerId == currentIndex - 2)
                     {
                         obstacleView.ObstacleObject.layer = _layerInactiveObject;
                         obstacleView.SpriteRenderer.color = Color.black;
-                        obstacleView.SpriteRenderer.gameObject.transform.localScale = smallSize2;
+                        Vector3 scale = new Vector3(scaleMultipler.x * smallSize2.x,
+                            scaleMultipler.y * smallSize2.y, scaleMultipler.z * smallSize2.z);
+                        obstacleView.SpriteRenderer.gameObject.transform.localScale = scale;
                     }
                     else if(obstacleView.LayerId == currentIndex - 1)
                     {
                         obstacleView.ObstacleObject.layer = _layerInactiveObject;
                         obstacleView.SpriteRenderer.color = Color.gray;
-                        obstacleView.SpriteRenderer.gameObject.transform.localScale = smallSize1;
+                        Vector3 scale = new Vector3(scaleMultipler.x * smallSize1.x,
+                            scaleMultipler.y * smallSize1.y, scaleMultipler.z * smallSize1.z);
+                        obstacleView.SpriteRenderer.gameObject.transform.localScale = scale;
                     }
                 }
             }
@@ -292,7 +376,6 @@ namespace Player
             Color newColor = new Color(color.r, color.g, color.b, transperency);
             return newColor;
         }
-        
         
         private void BindSpawnLinesTriggers(LayerView layerView)
         {

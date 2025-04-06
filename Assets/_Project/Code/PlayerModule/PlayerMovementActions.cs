@@ -13,6 +13,7 @@ namespace Player
         private InputEventBus _inputEvents;
         private PlayerConfig _playerConfig;
         private PlayerEventBus _playerEventBus;
+        private GameEventBus _gameEventBus;
         
         private int _currentLine;
         private int _currentLayer;
@@ -22,16 +23,19 @@ namespace Player
         private Timer _movementTimer;
         private float _targetPositionX;
         private float _startPositionX;
+        private bool _isPlayingState;
 
         [Inject]
         public void Construct(SceneViewsContainer sceneViewsContainer, InputEventBus inputEvents,
-            PlayerConfig playerConfig, PlayerView playerView, PlayerEventBus playerEventBus)
+            PlayerConfig playerConfig, PlayerView playerView, PlayerEventBus playerEventBus,
+            GameEventBus gameEventBus)
         {
             _sceneViewsContainer = sceneViewsContainer;
             _inputEvents = inputEvents;
             _playerConfig = playerConfig;
             _playerView = playerView;
             _playerEventBus = playerEventBus;
+            _gameEventBus = gameEventBus;
         }
 
         public void Initialisation()
@@ -39,11 +43,13 @@ namespace Player
             _currentLine = 2;
             _currentLayer = 2;
             _playerView.CurrentLayer = 2;
+            _isPlayingState = true;
             _inputEvents.OnMoveLeftButtonPerformed += TryMoveLeft;
             _inputEvents.OnMoveRightButtonPerformed += TryMoveRight;
             _inputEvents.OnMoveUpButtonPerformed += TryMoveUp;
             _inputEvents.OnMoveDownButtonPerformed += TryMoveDown;
             _playerEventBus.OnStageChanged += ChangeSpeed;
+            _gameEventBus.OnStateChanged += ChangeState;
         }
 
         public void Cleanup()
@@ -53,30 +59,49 @@ namespace Player
             _inputEvents.OnMoveUpButtonPerformed -= TryMoveUp;
             _inputEvents.OnMoveDownButtonPerformed -= TryMoveDown;
             _playerEventBus.OnStageChanged -= ChangeSpeed;
+            _gameEventBus.OnStateChanged -= ChangeState;
         }
 
         public void FixedExecute(float fixedDeltaTime)
         {
-            if (_isMoving)
+            if (_isPlayingState)
             {
-                switch (_movementDirection)
+                if (_isMoving)
                 {
-                    case MovementDirection.Left:
-                        MoveHorizontal();
-                        break;
-                    case MovementDirection.Right:
-                        MoveHorizontal();
-                        break;
-                    case MovementDirection.Up:
-                        MoveVertical();
-                        break;
-                    case MovementDirection.Down:
-                        MoveVertical();
-                        break;
+                    switch (_movementDirection)
+                    {
+                        case MovementDirection.Left:
+                            MoveHorizontal();
+                            break;
+                        case MovementDirection.Right:
+                            MoveHorizontal();
+                            break;
+                        case MovementDirection.Up:
+                            MoveVertical();
+                            break;
+                        case MovementDirection.Down:
+                            MoveVertical();
+                            break;
+                    }
                 }
+                MoveDown();
             }
-
-            MoveDown();
+            else
+            {
+                _playerView.PlayerRB.linearVelocity = Vector2.zero;
+            }
+        }
+        
+        private void ChangeState(GameState state)
+        {
+            if (state == GameState.PlayState)
+            {
+                _isPlayingState = true;
+            }
+            else
+            {
+                _isPlayingState = false;
+            }
         }
         
         private void ChangeSpeed(StageID stageID)
@@ -121,6 +146,7 @@ namespace Player
                 _playerView.CurrentStage = stageID;
                 _playerEventBus.OnStageChanged?.Invoke(stageID);
             }
+            _playerView.CurrentDepth = absDepth;
         }
 
         private void MoveVertical()
@@ -157,7 +183,7 @@ namespace Player
 
         private void TryMoveLeft()
         {
-            if (!_isMoving)
+            if (!_isMoving && _isPlayingState)
             {
                 if (_currentLine != 1)
                 {
@@ -180,7 +206,7 @@ namespace Player
         
         private void TryMoveRight()
         {
-            if (!_isMoving)
+            if (!_isMoving && _isPlayingState)
             {
                 if (_currentLine != 3)
                 {
@@ -203,7 +229,7 @@ namespace Player
         
         private void TryMoveUp()
         {
-            if (!_isMoving)
+            if (!_isMoving && _isPlayingState)
             {
                 if (_currentLayer != 3)
                 {
@@ -218,7 +244,7 @@ namespace Player
         
         private void TryMoveDown()
         {
-            if (!_isMoving)
+            if (!_isMoving && _isPlayingState)
             {
                 if (_currentLayer != 1)
                 {
