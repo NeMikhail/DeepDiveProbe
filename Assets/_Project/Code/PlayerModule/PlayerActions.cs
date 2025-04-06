@@ -13,6 +13,8 @@ namespace Player
         private SaveLoadEventBus _saveLoadEventBus;
         private AudioEventBus _audioEventBus;
         private GameEventBus _gameEventBus;
+        private bool _isInvincible = false;
+        private int _shieldCharge;
 
         [Inject]
         public void Construct(PlayerView playerView, PlayerConfig playerConfig, PlayerEventBus playerEventBus,
@@ -46,7 +48,10 @@ namespace Player
             }
             else
             {
-                RemoveOxygen(3);
+                if (!_isInvincible)
+                {
+                    RemoveOxygen(3);
+                }
             }
         }
 
@@ -66,8 +71,16 @@ namespace Player
         {
             if (_playerView.CurrentOxygen > oxygenValue)
             {
-                _playerView.CurrentOxygen -= oxygenValue;
+                //_playerView.CurrentOxygen -= oxygenValue;
                 _playerEventBus.OnOxygenChanged?.Invoke(_playerView.CurrentOxygen);
+                if (oxygenValue > 1)
+                {
+                    ActivateShield();
+                }
+                else
+                {
+                    DeActivateShield();
+                }
             }
             else
             {
@@ -77,6 +90,23 @@ namespace Player
                 _audioEventBus.OnPlaySound?.Invoke(AudioResourceID.Sound_Death);
                 _audioEventBus.OnStopMusicAndEnvSound?.Invoke();
                 _gameEventBus.OnGameOver?.Invoke();
+            }
+        }
+
+        private void ActivateShield()
+        {
+            _playerView.OxygenShieldObject.SetActive(true);
+            _shieldCharge = 2;
+            _isInvincible = true;
+        }
+        
+        private void DeActivateShield()
+        {
+            _shieldCharge--;
+            if (_shieldCharge == 0)
+            {
+                _playerView.OxygenShieldObject.SetActive(false);
+                _isInvincible = false;
             }
         }
 

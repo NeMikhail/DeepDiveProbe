@@ -89,7 +89,8 @@ namespace Player
                 _playerView.PlayerRB.linearVelocity = Vector2.zero;
             }
         }
-        
+
+
         private void ChangeState(GameState state)
         {
             if (state == GameState.PlayState)

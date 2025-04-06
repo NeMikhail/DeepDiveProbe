@@ -9,6 +9,7 @@ namespace Player
         [SerializeField] private GameObject _object;
         [SerializeField] private SpriteRenderer _playerSpriteRenderer;
         [SerializeField] private Scene2DActor _winZoneActor;
+        [SerializeField] private GameObject _oxygenShieldObject;
         private int _currentLine;
         private int _currentLayer;
         private int _currentOxygen;
@@ -23,6 +24,7 @@ namespace Player
         public GameObject Object { get => _object; }
         public SpriteRenderer PlayerSpriteRenderer { get => _playerSpriteRenderer; }
         public Scene2DActor WinZoneActor { get => _winZoneActor; }
+        public GameObject OxygenShieldObject { get => _oxygenShieldObject; }
         public string ViewID { get => _viewID; set => _viewID = value; }
         public int CurrentLine { get => _currentLine; set => _currentLine = value; }
         public int CurrentLayer { get => _currentLayer; set => _currentLayer = value; }
