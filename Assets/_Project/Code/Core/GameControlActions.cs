@@ -10,24 +10,26 @@ namespace GameCoreModule
         private StateEventsBus _stateEventsBus;
         private List<GameObject> _screensList;
         private CanvasList _canvasList;
+        private UIEventBus _uiEventBus;
 
         [Inject]
-        public void Construct(StateEventsBus stateEventsBus, CanvasList canvasList)
+        public void Construct(StateEventsBus stateEventsBus, CanvasList canvasList, UIEventBus uiEventBus)
         {
             _stateEventsBus = stateEventsBus;
             _canvasList = canvasList;
+            _uiEventBus = uiEventBus;
         }
 
         public void Initialisation()
         {
             InitializeScreensList();
-            _stateEventsBus.OnPauseStateActivate += ShowPauseScreen;
+            _uiEventBus.OnOpenPauseMenu += ShowPauseScreen;
             _stateEventsBus.OnPlayStateActivate += ShowGUIScreen;
         }
 
         public void Cleanup()
         {
-            _stateEventsBus.OnPauseStateActivate -= ShowPauseScreen;
+            _uiEventBus.OnOpenPauseMenu -= ShowPauseScreen;
             _stateEventsBus.OnPlayStateActivate -= ShowGUIScreen;
         }
         

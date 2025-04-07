@@ -19,6 +19,10 @@ namespace GameCoreModule
         private Action _onRunButtonPerformed;
         private Action _onRunButtonCanceled;
         private Action _onInteractButtonPerformed;
+        private Action _onMoveLeftButtonPerformed;
+        private Action _onMoveRightButtonPerformed;
+        private Action _onMoveUpButtonPerformed;
+        private Action _onMoveDownButtonPerformed;
 
         private Action _onUIClickButtonPerfomed;
         private Action _onUIClickButtonCanceled;
@@ -49,6 +53,14 @@ namespace GameCoreModule
         { get => _onRunButtonCanceled; set => _onRunButtonCanceled = value; }
         public Action OnInteractButtonPerformed
         { get => _onInteractButtonPerformed; set => _onInteractButtonPerformed = value; }
+        public Action OnMoveLeftButtonPerformed
+        { get => _onMoveLeftButtonPerformed; set => _onMoveLeftButtonPerformed = value; }
+        public Action OnMoveRightButtonPerformed
+        { get => _onMoveRightButtonPerformed; set => _onMoveRightButtonPerformed = value; }
+        public Action OnMoveUpButtonPerformed
+        { get => _onMoveUpButtonPerformed; set => _onMoveUpButtonPerformed = value; }
+        public Action OnMoveDownButtonPerformed
+        { get => _onMoveDownButtonPerformed; set => _onMoveDownButtonPerformed = value; }
         
         public Action OnUIClickButtonPerfomed
         { get => _onUIClickButtonPerfomed; set => _onUIClickButtonPerfomed = value; }

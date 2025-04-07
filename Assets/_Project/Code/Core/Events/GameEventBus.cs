@@ -20,6 +20,7 @@ namespace GameCoreModule
 
         private Action<GameState> _onStateChanged;
         private Action _onGameOver;
+        private Action _onWin;
 
         public Action<PrefabID, PoolCallback> OnCreatePool 
         { get => _onCreatePool; set => _onCreatePool = value; }
@@ -37,6 +38,8 @@ namespace GameCoreModule
         { get => _onStateChanged; set => _onStateChanged = value; }
         public Action OnGameOver 
         { get => _onGameOver; set => _onGameOver = value; }
+        public Action OnWin
+        { get => _onWin; set => _onWin = value; }
     }
 
     public class PoolCallback

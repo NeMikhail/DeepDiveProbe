@@ -6,6 +6,8 @@ namespace GameCoreModule
     {
         private Action<AudioResourceID> _onPlaySound;
         private Action<AudioResourceID> _onPlayMusic;
+        private Action<AudioResourceID> _onPlayEnvSound;
+        private Action _onStopMusicAndEnvSound;
         private Action<AudioResourceID, float> _onPlayMusicOneShot;
         private Action<AudioResourceID> _onPlayMusicWithPauseCurrent;
         private Action<AudioCallback> _onGetAudioSettings;
@@ -16,6 +18,10 @@ namespace GameCoreModule
         { get => _onPlaySound; set => _onPlaySound = value; }
         public Action<AudioResourceID> OnPlayMusic
         { get => _onPlayMusic; set => _onPlayMusic = value; }
+        public Action<AudioResourceID> OnPlayEnvSound
+        { get => _onPlayEnvSound; set => _onPlayEnvSound = value; }
+        public Action OnStopMusicAndEnvSound
+        { get => _onStopMusicAndEnvSound; set => _onStopMusicAndEnvSound = value; }
         public Action<AudioResourceID, float> OnPlayMusicOneShot
         { get => _onPlayMusicOneShot; set => _onPlayMusicOneShot = value; }
         public Action<AudioResourceID> OnPlayMusicWithPauseCurrent
