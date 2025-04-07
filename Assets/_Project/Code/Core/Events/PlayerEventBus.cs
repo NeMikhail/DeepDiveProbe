@@ -15,6 +15,9 @@ namespace GameCoreModule
         private Action<int> _onDepthChanged;
         private Action<ObstacleView> _onInteractWithObstacle;
         private Action<StageID> _onStageChanged;
+        private Action _onExtraLifeAdded;
+        private Action _onExtraLifeRemoved;
+        private Action _onActivateNightvision;
         
         
         public Action<GameObject> OnTryInteractWithObject
@@ -35,5 +38,11 @@ namespace GameCoreModule
         { get => _onInteractWithObstacle; set => _onInteractWithObstacle = value; }
         public Action<StageID> OnStageChanged
         { get => _onStageChanged; set => _onStageChanged = value; }
+        public Action OnExtraLifeAdded
+        { get => _onExtraLifeAdded; set => _onExtraLifeAdded = value; }
+        public Action OnExtraLifeRemoved
+        { get => _onExtraLifeRemoved; set => _onExtraLifeRemoved = value; }
+        public Action OnActivateNightvision
+        { get => _onActivateNightvision; set => _onActivateNightvision = value; }
     }
 }

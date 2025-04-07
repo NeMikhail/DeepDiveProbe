@@ -371,6 +371,64 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35d5bba084404e61816343c607bfa860, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &4612218534296226961
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5194035720254601525}
+  - component: {fileID: 2854001360420447483}
+  - component: {fileID: 6049367655840517647}
+  m_Layer: 0
+  m_Name: UpgradesModule
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5194035720254601525
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4612218534296226961}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 777753476302231257}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2854001360420447483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4612218534296226961}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c42c4365de741319f7325eb36eedf88, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6049367655840517647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4612218534296226961}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f433de1c44474889840811e9725ffe87, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _upgradesListConfig: {fileID: 11400000, guid: 1a07cf1451936c848bd152e895f9ae5c, type: 2}
 --- !u!1 &4672492534714671576
 GameObject:
   m_ObjectHideFlags: 0
@@ -466,6 +524,7 @@ Transform:
   - {fileID: 6217272968230231539}
   - {fileID: 7625342020625812643}
   - {fileID: 5261877451355309562}
+  - {fileID: 5194035720254601525}
   m_Father: {fileID: 2021009153054469144}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3887973373558586413
@@ -487,6 +546,7 @@ MonoBehaviour:
   - {fileID: 1880761503561545706}
   - {fileID: 6632265747848852088}
   - {fileID: 2033934664421375653}
+  - {fileID: 2854001360420447483}
 --- !u!114 &4625006125924430675
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -507,6 +567,7 @@ MonoBehaviour:
   - {fileID: 8602162812946526549}
   - {fileID: 6009706493826688320}
   - {fileID: 1376071119548170903}
+  - {fileID: 6049367655840517647}
   _installerPrefabs: []
   _autoRun: 1
   OnPreInstall:

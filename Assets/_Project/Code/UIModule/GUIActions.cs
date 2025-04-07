@@ -1,10 +1,13 @@
 using System.Collections.Generic;
+using System.Linq;
 using GameCoreModule;
 using MAEngine;
 using MAEngine.Extention;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Upgrade;
 using Zenject;
+using Random = System.Random;
 
 namespace UI
 {
@@ -19,14 +22,18 @@ namespace UI
         private SaveLoadEventBus _saveLoadEventBus;
         private InputEventBus _inputEventBus;
         private GameEventBus _gameEventBus;
+        private UpgradesEventBus _upgradesEventBus;
+        private UpgradesListConfig _upgradesListConfig;
 
         private DialogueView _activeDialogue;
         private Timer _dialogueTimer;
+        private System.Random _random;
+        private int _extraLifes;
 
         [Inject]
         public void Construct(GUIView guiView, StateEventsBus stateEventsBus, PlayerEventBus playerEventBus,
             UIEventBus uiEventBus, SaveLoadEventBus saveLoadEventBus, InputEventBus inputEventBus, 
-            GameEventBus gameEventBus)
+            GameEventBus gameEventBus, UpgradesEventBus upgradesEventBus, UpgradesListConfig upgradesListConfig)
         {
             _guiView = guiView;
             _stateEventsBus = stateEventsBus;
@@ -35,6 +42,8 @@ namespace UI
             _saveLoadEventBus = saveLoadEventBus;
             _inputEventBus = inputEventBus;
             _gameEventBus = gameEventBus;
+            _upgradesEventBus = upgradesEventBus;
+            _upgradesListConfig = upgradesListConfig;
         }
         
         public void PreInitialisation()
@@ -55,7 +64,14 @@ namespace UI
             _guiView.WinRetryButton.Button.onClick.AddListener(ReloadScene);
             _guiView.LoseRetryButton.Button.onClick.AddListener(ReloadScene);
             _guiView.WinProgressClearButton.Button.onClick.AddListener(ClearProgress);
+            _upgradesEventBus.OnLevelUp += InitializeUpgradeScreen;
+            _upgradesEventBus.OnUpgradeApplied += CloseUpgradeScreen;
+            _upgradesEventBus.OnExpChanged += UpdateLevelSlider;
+            _playerEventBus.OnExtraLifeAdded += AddExtraLife;
+            _playerEventBus.OnExtraLifeRemoved += RemoveExtraLife;
             LoadBestDepth();
+            _guiView.ExpSlider.maxValue = _upgradesListConfig.LevelExp;
+            _random = new Random();
         }
 
         public void Cleanup()
@@ -71,6 +87,11 @@ namespace UI
             _guiView.WinRetryButton.Button.onClick.RemoveListener(ReloadScene);
             _guiView.LoseRetryButton.Button.onClick.RemoveListener(ReloadScene);
             _guiView.WinProgressClearButton.Button.onClick.RemoveListener(ClearProgress);
+            _upgradesEventBus.OnLevelUp -= InitializeUpgradeScreen;
+            _upgradesEventBus.OnUpgradeApplied -= CloseUpgradeScreen;
+            _upgradesEventBus.OnExpChanged -= UpdateLevelSlider;
+            _playerEventBus.OnExtraLifeAdded -= AddExtraLife;
+            _playerEventBus.OnExtraLifeRemoved -= RemoveExtraLife;
         }
         
         public void LateExecute(float fixedDeltaTime)
@@ -83,6 +104,88 @@ namespace UI
                     CheckDialogueEnd();
                 }
             }
+        }
+        
+        private void RemoveExtraLife()
+        {
+            _extraLifes--;
+            if (_guiView.ExtraLifes.Count - 1 >= _extraLifes)
+            {
+                _guiView.ExtraLifes[_extraLifes].SetActive(false);
+            }
+        }
+
+        private void AddExtraLife()
+        {
+            if (_guiView.ExtraLifes.Count - 1 >= _extraLifes)
+            {
+                _guiView.ExtraLifes[_extraLifes].SetActive(true);
+            }
+            _extraLifes++;
+        }
+        
+        private void UpdateLevelSlider(int value)
+        {
+            _guiView.ExpSlider.value = value;
+        }
+
+        private void CloseUpgradeScreen(UpgradeID upgradeId)
+        {
+            foreach (UpgradeView upgradeView in _guiView.ActiveUpgradeViews)
+            {
+                GameObject.Destroy(upgradeView.gameObject);
+            }
+            _guiView.ActiveUpgradeViews.Clear();
+            _guiView.UpgradePanel.gameObject.SetActive(false);
+        }
+
+        private void InitializeUpgradeScreen(List<UpgradeID> upgradeIds)
+        {
+            if (upgradeIds.Count == 0)
+            {
+                _upgradesEventBus?.OnUpgradeApplied.Invoke(UpgradeID.NONE);
+                return;
+            }
+            else if(upgradeIds.Count == 1)
+            {
+                SpawnUpgradeButton(upgradeIds[0]);
+            }
+            else if(upgradeIds.Count == 2)
+            {
+                SpawnUpgradeButton(upgradeIds[0]);
+                SpawnUpgradeButton(upgradeIds[1]);
+            }
+            else
+            {
+                int index1;
+                int index2;
+                int index3;
+                index1 = _random.Next(0, upgradeIds.Count());
+                SpawnUpgradeButton(upgradeIds[index1]);
+                index2 = _random.Next(0, upgradeIds.Count());
+                while (index2 == index1)
+                {
+                    index2 = _random.Next(0, upgradeIds.Count());
+                }
+                SpawnUpgradeButton(upgradeIds[index2]);
+                index3 = _random.Next(0, upgradeIds.Count());
+                while (index3 == index1 || index3 == index2)
+                {
+                    index3 = _random.Next(0, upgradeIds.Count());
+                }
+                SpawnUpgradeButton(upgradeIds[index3]);
+            }
+            _guiView.UpgradePanel.gameObject.SetActive(true);
+        }
+
+        private void SpawnUpgradeButton(UpgradeID upgradeId)
+        {
+            GameObjectSpawnCallback callback = new GameObjectSpawnCallback();
+            _gameEventBus.OnSpawnObject?.Invoke(PrefabID.UIUpgradePanel, Vector3.zero,
+                _guiView.UpgradesLayout, callback);
+            UpgradeView view = callback.SpawnedObject.GetComponent<UpgradeView>();
+            view.InitializeView(_upgradesListConfig.UpgradesConfigsList[upgradeId], _upgradesEventBus);
+            _guiView.ActiveUpgradeViews.Add(view);
         }
 
         private void SkipPhrase()

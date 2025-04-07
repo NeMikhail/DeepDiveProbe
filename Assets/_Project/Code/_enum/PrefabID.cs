@@ -20,5 +20,6 @@ public enum PrefabID
     MovingVerticalDownObstacle = 16,
     MovingChaoticHorizontalObstacle = 17,
     MovingChaoticVerticalObstacle = 18,
-    StalkingObstacle = 19
+    StalkingObstacle = 19,
+    UIUpgradePanel = 20
 }

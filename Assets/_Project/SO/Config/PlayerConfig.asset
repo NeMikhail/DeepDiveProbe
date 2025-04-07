@@ -17,6 +17,7 @@ MonoBehaviour:
   _layerChangingTime: 0.5
   _oxygenValue: 10
   _addingOxygenValue: 4
+  _maxShieldCharge: 2
   _line1PositionX: -3
   _line2PositionX: 0
   _line3PositionX: 3

@@ -15,6 +15,7 @@ namespace Player
         private PlayerView _playerView;
         private PlayerEventBus _playerEventBus;
         private ObstaclesSpawnConfig _obstaclesSpawnConfig;
+        private UpgradesEventBus _upgradesEventBus;
         
         private System.Random _random;
         private Dictionary<int, ObstaclesLine> _obstacleLines;
@@ -26,17 +27,20 @@ namespace Player
 
         private float _stageOxygenCount;
         private List<PrefabID> _stageSpawnableObstacles;
+        private int _additionalOxygen;
+        private bool _haveOxygenMagnet;
         
 
         [Inject]
         public void Construct(MapView mapView, GameEventBus gameEventBus, PlayerView playerView,
-            PlayerEventBus playerEventBus, ObstaclesSpawnConfig obstaclesSpawnConfig)
+            PlayerEventBus playerEventBus, ObstaclesSpawnConfig obstaclesSpawnConfig, UpgradesEventBus upgradeEventBus)
         {
             _mapView = mapView;
             _gameEventBus = gameEventBus;
             _playerView = playerView;
             _playerEventBus = playerEventBus;
             _obstaclesSpawnConfig = obstaclesSpawnConfig;
+            _upgradesEventBus = upgradeEventBus;
         }
 
 
@@ -50,15 +54,21 @@ namespace Player
             _stageOxygenCount = _obstaclesSpawnConfig.Stage1OxygenSpawnCount;
             _stageSpawnableObstacles = _obstaclesSpawnConfig.Stage1Obstacles;
             BindSpawnLinesTriggers(_mapView.Layer1View);
-            _currentSpawnLineIndex = 0;
-            SpawnObstaclesOnLine();
-            _currentSpawnLineIndex = 1;
-            SpawnObstaclesOnLine();
-            _playerEventBus.OnTriggerSpawnLine += SpawnObstaclesOnLine;
+            if(_mapView.Layer1View.SpawnZones != null)
+            {
+                _currentSpawnLineIndex = 0;
+                SpawnObstaclesOnLine();
+                _currentSpawnLineIndex = 1;
+                SpawnObstaclesOnLine();
+                _playerEventBus.OnTriggerSpawnLine += SpawnObstaclesOnLine;
+            }
             _playerEventBus.OnChangeLayer += ChangeCurrentLayerForObstacles;
             _playerEventBus.OnStageChanged += ChangeStage;
             _gameEventBus.OnStateChanged += ChangeState;
+            _upgradesEventBus.OnUpgradeApplied += UpgradeApplied;
             _isPlaying = true;
+            _additionalOxygen = 0;
+            _haveOxygenMagnet = false;
         }
 
         public void Cleanup()
@@ -68,6 +78,7 @@ namespace Player
             _playerEventBus.OnChangeLayer -= ChangeCurrentLayerForObstacles;
             _playerEventBus.OnStageChanged -= ChangeStage;
             _gameEventBus.OnStateChanged -= ChangeState;
+            _upgradesEventBus.OnUpgradeApplied -= UpgradeApplied;
         }
         
         public void FixedExecute(float fixedDeltaTime)
@@ -80,6 +91,20 @@ namespace Player
             else
             {
                 StopMovables();
+            }
+        }
+        
+        
+        private void UpgradeApplied(UpgradeID upgradeID)
+        {
+            if (upgradeID == UpgradeID.UpgradeExtraOxygenBubbles)
+            {
+                _additionalOxygen++;
+            }
+
+            if (upgradeID == UpgradeID.UpgradeOxygenMagnet)
+            {
+                _haveOxygenMagnet = true;
             }
         }
 
@@ -326,14 +351,14 @@ namespace Player
                     }
                     if (obstacleView.LayerId == currentIndex)
                     {
-                        obstacleView.ObstacleObject.layer = _layerActiveObject;
+                        SetCollidingLayer(obstacleView, true);
                         obstacleView.SpriteRenderer.color = Color.white;
                         Vector3 scale = new Vector3(scaleMultipler.x, scaleMultipler.y, scaleMultipler.z);
                         obstacleView.SpriteRenderer.gameObject.transform.localScale = scale;
                     }
                     else if (obstacleView.LayerId > currentIndex + 1)
                     {
-                        obstacleView.ObstacleObject.layer = _layerInactiveObject;
+                        SetCollidingLayer(obstacleView, false);
                         obstacleView.SpriteRenderer.color = Color.black;
                         obstacleView.SpriteRenderer.color =
                             ChangeTransperency(obstacleView.SpriteRenderer.color, 0.1f);
@@ -343,7 +368,7 @@ namespace Player
                     }
                     else if(obstacleView.LayerId > currentIndex)
                     {
-                        obstacleView.ObstacleObject.layer = _layerInactiveObject;
+                        SetCollidingLayer(obstacleView, false);
                         obstacleView.SpriteRenderer.color = Color.gray;
                         obstacleView.SpriteRenderer.color =
                             ChangeTransperency(obstacleView.SpriteRenderer.color, 0.2f);
@@ -353,7 +378,7 @@ namespace Player
                     }
                     else if(obstacleView.LayerId == currentIndex - 2)
                     {
-                        obstacleView.ObstacleObject.layer = _layerInactiveObject;
+                        SetCollidingLayer(obstacleView, false);
                         obstacleView.SpriteRenderer.color = Color.black;
                         Vector3 scale = new Vector3(scaleMultipler.x * smallSize2.x,
                             scaleMultipler.y * smallSize2.y, scaleMultipler.z * smallSize2.z);
@@ -361,12 +386,38 @@ namespace Player
                     }
                     else if(obstacleView.LayerId == currentIndex - 1)
                     {
-                        obstacleView.ObstacleObject.layer = _layerInactiveObject;
+                        SetCollidingLayer(obstacleView, false);
                         obstacleView.SpriteRenderer.color = Color.gray;
                         Vector3 scale = new Vector3(scaleMultipler.x * smallSize1.x,
                             scaleMultipler.y * smallSize1.y, scaleMultipler.z * smallSize1.z);
                         obstacleView.SpriteRenderer.gameObject.transform.localScale = scale;
                     }
+                }
+            }
+        }
+
+        private void SetCollidingLayer(ObstacleView obstacleView, bool isCollidingPlayer)
+        {
+            if (isCollidingPlayer)
+            {
+                obstacleView.ObstacleObject.layer = _layerActiveObject;
+            }
+            else
+            {
+                if (obstacleView.PrefabID == PrefabID.OxygenBubble)
+                {
+                    if (_haveOxygenMagnet)
+                    {
+                        obstacleView.ObstacleObject.layer = _layerActiveObject;
+                    }
+                    else
+                    {
+                        obstacleView.ObstacleObject.layer = _layerInactiveObject;
+                    }
+                }
+                else
+                {
+                    obstacleView.ObstacleObject.layer = _layerInactiveObject;
                 }
             }
         }
@@ -379,10 +430,13 @@ namespace Player
         
         private void BindSpawnLinesTriggers(LayerView layerView)
         {
-            foreach (SpawnZonesView spawnZonesView in layerView.SpawnZones)
+            if (layerView.SpawnZones != null)
             {
-                spawnZonesView.SpawnLineActor.TriggerEnter += TriggerSpawnLine;
-                spawnZonesView.SpawnLineActor.TriggerExit += TriggerLineExit;
+                foreach (SpawnZonesView spawnZonesView in layerView.SpawnZones)
+                {
+                    spawnZonesView.SpawnLineActor.TriggerEnter += TriggerSpawnLine;
+                    spawnZonesView.SpawnLineActor.TriggerExit += TriggerLineExit;
+                }
             }
         }
         
@@ -434,7 +488,7 @@ namespace Player
                 float oxygenCount;
                 bool isOxygenSpawning = false;
                 
-                oxygenCount = _stageOxygenCount;
+                oxygenCount = _stageOxygenCount + _additionalOxygen;
                 spawnableObstacles = _stageSpawnableObstacles;
                 
                 if (oxygenCount < 1)

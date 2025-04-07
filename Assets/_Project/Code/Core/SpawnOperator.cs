@@ -62,6 +62,7 @@ namespace GameCoreModule
                 _sceneViewsContainer.AddView(view);
             }
             callback.SetObject(go);
+            callback.SpawnedObject.transform.localScale = prefab.transform.localScale;
         }
 
         private void SpawnObject(PrefabID prefabID, Vector3 position, Quaternion rotation, Transform root,

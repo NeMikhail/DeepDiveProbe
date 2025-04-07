@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 290c9c904aba492f99f83fb1880c9b8f, type: 3}
+  m_Name: 6AntiDepth
+  m_EditorClassIdentifier: 
+  _upgradeId: 6
+  _upgradeImage: {fileID: -4481748357418280283, guid: e1fb9d706cae6664aabe6cdc3fb23e80, type: 3}
+  _upgradeText: Resistance to acceleration when gaining depth
+  _maxUpgradeLevels: 1
+  _upgradeRequirement: 1

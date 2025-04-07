@@ -2,6 +2,7 @@
 using MAEngine;
 using MAEngine.Extention;
 using UnityEngine;
+using Upgrade;
 using Zenject;
 
 namespace Player
@@ -13,6 +14,8 @@ namespace Player
         private PlayerConfig _playerConfig;
         private PlayerEventBus _playerEventBus;
         private GameEventBus _gameEventBus;
+        private UpgradesContainer _upgradeContainer;
+        private UpgradesEventBus _upgradeEventBus;
         
         private int _currentLine;
         private int _currentLayer;
@@ -23,17 +26,21 @@ namespace Player
         private float _targetPositionX;
         private float _startPositionX;
         private bool _isPlayingState;
+        private float _lineChangingTime;
+        private float _layerChangingTime;
 
         [Inject]
         public void Construct(InputEventBus inputEvents,
             PlayerConfig playerConfig, PlayerView playerView, PlayerEventBus playerEventBus,
-            GameEventBus gameEventBus)
+            GameEventBus gameEventBus, UpgradesContainer upgradeContainer, UpgradesEventBus upgradeEventBus)
         {
             _inputEvents = inputEvents;
             _playerConfig = playerConfig;
             _playerView = playerView;
             _playerEventBus = playerEventBus;
             _gameEventBus = gameEventBus;
+            _upgradeContainer = upgradeContainer;
+            _upgradeEventBus = upgradeEventBus;
         }
 
         public void Initialisation()
@@ -48,6 +55,9 @@ namespace Player
             _inputEvents.OnMoveDownButtonPerformed += TryMoveDown;
             _playerEventBus.OnStageChanged += ChangeSpeed;
             _gameEventBus.OnStateChanged += ChangeState;
+            _upgradeEventBus.OnUpgradeApplied += UpgradeApplied;
+            _lineChangingTime = _playerConfig.LineChangingTime;
+            _layerChangingTime = _playerConfig.LayerChangingTime;
         }
 
         public void Cleanup()
@@ -89,6 +99,20 @@ namespace Player
                 _playerView.PlayerRB.linearVelocity = Vector2.zero;
             }
         }
+        
+        private void UpgradeApplied(UpgradeID upgradeID)
+        {
+            if (upgradeID == UpgradeID.UpgradeAntiDepth)
+            {
+                _playerView.CurrentSpeed = _playerConfig.Speed;
+            }
+            else if (upgradeID == UpgradeID.UpgradeSpeedBoost)
+            {
+                _lineChangingTime -= 0.1f;
+                _layerChangingTime -= _layerChangingTime - 0.1f;
+            }
+            
+        }
 
 
         private void ChangeState(GameState state)
@@ -108,15 +132,24 @@ namespace Player
             //Debug.LogWarning(stageID);
             if (stageID == StageID.Stage1)
             {
+                PlayerPrefs.SetInt(UpgradeRequirement.GameStage3Achived.ToString(), 0);
                 _playerView.CurrentSpeed = _playerConfig.Speed;
             }
             else if (stageID == StageID.Stage2)
             {
-                _playerView.CurrentSpeed = _playerConfig.Speed * 1.3f;
+                PlayerPrefs.SetInt(UpgradeRequirement.GameStage2Achived.ToString(), 1);
+                if (!_upgradeContainer.ActiveUpgrades.Contains(UpgradeID.UpgradeAntiDepth))
+                {
+                    _playerView.CurrentSpeed = _playerConfig.Speed * 1.3f;
+                }
             }
             else if (stageID == StageID.Stage3)
             {
-                _playerView.CurrentSpeed = _playerConfig.Speed * 1.5f;
+                PlayerPrefs.SetInt(UpgradeRequirement.GameStage3Achived.ToString(), 1);
+                if (!_upgradeContainer.ActiveUpgrades.Contains(UpgradeID.UpgradeAntiDepth))
+                {
+                    _playerView.CurrentSpeed = _playerConfig.Speed * 1.5f;
+                }
             }
         }
 
@@ -188,7 +221,7 @@ namespace Player
                 {
                     _currentLine--;
                     _movementDirection = MovementDirection.Left;
-                    _movementTimer = new Timer(_playerConfig.LineChangingTime);
+                    _movementTimer = new Timer(_lineChangingTime);
                     _isMoving = true;
                     if (_currentLine == 1)
                     {
@@ -211,7 +244,7 @@ namespace Player
                 {
                     _currentLine++;
                     _movementDirection = MovementDirection.Right;
-                    _movementTimer = new Timer(_playerConfig.LineChangingTime);
+                    _movementTimer = new Timer(_lineChangingTime);
                     _isMoving = true;
                     if (_currentLine == 3)
                     {
@@ -235,7 +268,7 @@ namespace Player
                     _targetLayer = _currentLayer + 1;
                     _movementDirection = MovementDirection.Up;
                     _playerView.PlayerSpriteRenderer.sprite = _playerConfig.GoingUpSprite;
-                    _movementTimer = new Timer(_playerConfig.LayerChangingTime);
+                    _movementTimer = new Timer(_layerChangingTime);
                     _isMoving = true;
                 }
             }
@@ -250,7 +283,7 @@ namespace Player
                     _targetLayer = _currentLayer - 1;
                     _movementDirection = MovementDirection.Down;
                     _playerView.PlayerSpriteRenderer.sprite = _playerConfig.GoingDownSprite;
-                    _movementTimer = new Timer(_playerConfig.LayerChangingTime);
+                    _movementTimer = new Timer(_lineChangingTime);
                     _isMoving = true;
                 }
             }

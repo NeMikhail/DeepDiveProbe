@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Upgrade;
 
 namespace UI
 {
@@ -23,6 +25,11 @@ namespace UI
         [SerializeField] private ButtonView _winRetryButton;
         [SerializeField] private ButtonView _loseRetryButton;
         [SerializeField] private ButtonView _winProgressClearButton;
+        [SerializeField] private GameObject _upgradePanel;
+        [SerializeField] private RectTransform _upgragesLayout;
+        [SerializeField] private Slider _expSlider;
+        [SerializeField] private List<GameObject> _extraLifes;
+        private List<UpgradeView> _activeUpgradeViews;
         
         public ButtonView PauseButton => _pauseButton;
         public Slider OxygenSlider => _oxygenSlider;
@@ -36,10 +43,16 @@ namespace UI
         public ButtonView WinRetryButton => _winRetryButton;
         public ButtonView LoseRetryButton => _loseRetryButton;
         public ButtonView WinProgressClearButton => _winProgressClearButton;
+        public GameObject UpgradePanel => _upgradePanel;
+        public RectTransform UpgradesLayout => _upgragesLayout;
+        public Slider ExpSlider => _expSlider;
+        public List<GameObject> ExtraLifes => _extraLifes;
+        public List<UpgradeView> ActiveUpgradeViews => _activeUpgradeViews;
         
 
         public void InitializeView()
         {
+            _activeUpgradeViews = new List<UpgradeView>();
             _oxygenSlider.value = _oxygenSlider.maxValue;
             _depthSlider.value = 0;
             UpdateLayerImages(2);

@@ -25,7 +25,7 @@ namespace Player
         
         public void Initialisation()
         {
-            _random = new System.Random();
+            _random = new System.Random(); 
             SpawnWalls();
             InitializeSpawnZones(_mapView.Layer1View);
             InitializeSpawnZones(_mapView.Layer2View);

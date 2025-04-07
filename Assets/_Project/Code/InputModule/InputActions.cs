@@ -34,6 +34,7 @@ namespace Input
 
             bool isWebGLOnMobile = Application.isMobilePlatform
                                    && Application.platform == RuntimePlatform.WebGLPlayer;
+            
         }
 
         public void Cleanup()
