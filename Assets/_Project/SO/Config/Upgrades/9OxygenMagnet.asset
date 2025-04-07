@@ -16,4 +16,4 @@ MonoBehaviour:
   _upgradeImage: {fileID: 6204648382260406026, guid: 0ce9b5e65f22930438b8ce84a8909b3c, type: 3}
   _upgradeText: Oxygen bubbles are attracted through the layers
   _maxUpgradeLevels: 1
-  _upgradeRequirement: 2
+  _upgradeRequirement: 4

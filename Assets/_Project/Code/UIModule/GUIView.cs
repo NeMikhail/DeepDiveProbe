@@ -28,6 +28,7 @@ namespace UI
         [SerializeField] private GameObject _upgradePanel;
         [SerializeField] private RectTransform _upgragesLayout;
         [SerializeField] private Slider _expSlider;
+        [SerializeField] private ButtonView _denyUpgrade;
         [SerializeField] private List<GameObject> _extraLifes;
         private List<UpgradeView> _activeUpgradeViews;
         
@@ -46,6 +47,7 @@ namespace UI
         public GameObject UpgradePanel => _upgradePanel;
         public RectTransform UpgradesLayout => _upgragesLayout;
         public Slider ExpSlider => _expSlider;
+        public ButtonView DenyUpgrade => _denyUpgrade;
         public List<GameObject> ExtraLifes => _extraLifes;
         public List<UpgradeView> ActiveUpgradeViews => _activeUpgradeViews;
         

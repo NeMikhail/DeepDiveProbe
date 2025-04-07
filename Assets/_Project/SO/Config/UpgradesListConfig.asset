@@ -34,4 +34,4 @@ MonoBehaviour:
       Value: {fileID: 11400000, guid: c006520cc8de64c4aa229d02e6d3fa02, type: 2}
     - Key: 10
       Value: {fileID: 11400000, guid: 9d5dcd469ab064b468fbe740ddb1e4e4, type: 2}
-  _levelExp: 47
+  _levelExp: 30

@@ -209,7 +209,7 @@ namespace Player
                         case PrefabID.StalkingObstacle:
                             if (!obstacleView.IsStalking)
                             {
-                                StartStalkingMovement(obstacleView, 1.5f);
+                                StartStalkingMovement(obstacleView, 2.2f);
                             }
                             break;
                         default:
@@ -333,8 +333,8 @@ namespace Player
         {
             Vector3 smallSize1 = new Vector3(0.8f, 0.8f, 1);
             Vector3 smallSize2 = new Vector3(0.5f, 0.5f, 1);
-            Vector3 bigSize1 = new Vector3(1.2f, 1.2f, 1);
-            Vector3 bigSize2 = new Vector3(1.4f, 1.4f, 1);
+            Vector3 bigSize1 = new Vector3(1.4f, 1.4f, 1);
+            Vector3 bigSize2 = new Vector3(1.5f, 1.5f, 1);
             foreach (KeyValuePair<int, ObstaclesLine> obstaclesLine in _obstacleLines)
             {
                 List<ObstacleView> obstacleViews = obstaclesLine.Value.Obstacles;

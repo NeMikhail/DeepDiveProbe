@@ -129,10 +129,9 @@ namespace Player
         
         private void ChangeSpeed(StageID stageID)
         {
-            //Debug.LogWarning(stageID);
             if (stageID == StageID.Stage1)
             {
-                PlayerPrefs.SetInt(UpgradeRequirement.GameStage3Achived.ToString(), 0);
+                //PlayerPrefs.SetInt(UpgradeRequirement.GameStage3Achived.ToString(), 0);
                 _playerView.CurrentSpeed = _playerConfig.Speed;
             }
             else if (stageID == StageID.Stage2)

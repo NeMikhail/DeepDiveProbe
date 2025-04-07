@@ -58,5 +58,11 @@ TagManager:
   - name: UI
     uniqueID: 3918310517
     locked: 0
+  - name: Walls2
+    uniqueID: 864049835
+    locked: 0
+  - name: Walls3
+    uniqueID: 1507336189
+    locked: 0
   m_RenderingLayers:
   - Default

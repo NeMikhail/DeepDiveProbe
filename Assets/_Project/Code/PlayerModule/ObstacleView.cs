@@ -84,23 +84,19 @@ namespace Player
             _isStalking = true;
             _stalkingSpeed = speed;
             _playerView = playerView;
+            _targetPosition = _playerView.PlayerRB.gameObject.transform.position;
+            _layerId = _playerView.CurrentLayer;
         }
 
         public void Move()
         {
             if (_isStalking)
             {
-                _playerView.IsLightOn = true;
-                
                 if (_playerView.IsLightOn)
                 {
                     _targetPosition = _playerView.PlayerRB.gameObject.transform.position;
+                    _layerId = _playerView.CurrentLayer;
                 }
-                else
-                {
-                    _targetPosition = _rigidbody2D.transform.position;
-                }
-
                 Vector2 direction = (_targetPosition - (Vector2)_rigidbody2D.transform.position).normalized;
                 _rigidbody2D.linearVelocity = direction * _stalkingSpeed;
             }

@@ -69,6 +69,7 @@ namespace UI
             _upgradesEventBus.OnExpChanged += UpdateLevelSlider;
             _playerEventBus.OnExtraLifeAdded += AddExtraLife;
             _playerEventBus.OnExtraLifeRemoved += RemoveExtraLife;
+            _guiView.DenyUpgrade.Button.onClick.AddListener(DenyUpgrade);
             LoadBestDepth();
             _guiView.ExpSlider.maxValue = _upgradesListConfig.LevelExp;
             _random = new Random();
@@ -92,6 +93,7 @@ namespace UI
             _upgradesEventBus.OnExpChanged -= UpdateLevelSlider;
             _playerEventBus.OnExtraLifeAdded -= AddExtraLife;
             _playerEventBus.OnExtraLifeRemoved -= RemoveExtraLife;
+            _guiView.DenyUpgrade.Button.onClick.RemoveListener(DenyUpgrade);
         }
         
         public void LateExecute(float fixedDeltaTime)
@@ -127,6 +129,11 @@ namespace UI
         private void UpdateLevelSlider(int value)
         {
             _guiView.ExpSlider.value = value;
+        }
+        
+        private void DenyUpgrade()
+        {
+            _upgradesEventBus.OnUpgradeApplied?.Invoke(UpgradeID.NONE);
         }
 
         private void CloseUpgradeScreen(UpgradeID upgradeId)

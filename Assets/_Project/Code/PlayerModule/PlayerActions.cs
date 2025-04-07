@@ -1,11 +1,12 @@
 using GameCoreModule;
 using MAEngine;
+using MAEngine.Extention;
 using UnityEngine;
 using Zenject;
 
 namespace Player
 {
-    public class PlayerActions : IAction, IInitialisation, ICleanUp
+    public class PlayerActions : IAction, IInitialisation, ICleanUp, IFixedExecute
     {
         private PlayerView _playerView;
         private PlayerConfig _playerConfig;
@@ -14,6 +15,9 @@ namespace Player
         private AudioEventBus _audioEventBus;
         private GameEventBus _gameEventBus;
         private UpgradesEventBus _upgradesEventBus;
+        private InputEventBus _inputEventBus;
+        private StateEventsBus _stateEventsBus;
+        
         private bool _isInvincible = false;
         private int _shieldCharge;
         private int _maxShieldCharge;
@@ -22,11 +26,12 @@ namespace Player
         private float _oxygenRecoveryChance;
         private System.Random _random;
         private int _extraLifes;
+        private Timer _winTimer;
 
         [Inject]
         public void Construct(PlayerView playerView, PlayerConfig playerConfig, PlayerEventBus playerEventBus,
             SaveLoadEventBus saveLoadEventBus, AudioEventBus audioEventBus, GameEventBus gameEventBus,
-            UpgradesEventBus upgradesEventBus)
+            UpgradesEventBus upgradesEventBus, InputEventBus inputEventBus, StateEventsBus stateEventsBus)
         {
             _playerView = playerView;
             _playerConfig = playerConfig;
@@ -35,6 +40,8 @@ namespace Player
             _audioEventBus = audioEventBus;
             _gameEventBus = gameEventBus;
             _upgradesEventBus = upgradesEventBus;
+            _inputEventBus = inputEventBus;
+            _stateEventsBus = stateEventsBus;
         }
 
 
@@ -48,6 +55,8 @@ namespace Player
             _playerEventBus.OnInteractWithObstacle += InteractWithObstacle;
             _playerView.WinZoneActor.TriggerEnter += WinAction;
             _upgradesEventBus.OnUpgradeApplied += UpgradeApplied;
+            _inputEventBus.OnRunButtonPerformed += TrySwitchLight;
+            _playerEventBus.OnStageChanged += TrySwitchDarkness;
             _oxygenRecovery = 0;
             _currentOxygenRecovery = _oxygenRecovery;
             _oxygenRecoveryChance = 0;
@@ -63,8 +72,29 @@ namespace Player
             _playerEventBus.OnInteractWithObstacle -= InteractWithObstacle;
             _playerView.WinZoneActor.TriggerEnter -= WinAction;
             _upgradesEventBus.OnUpgradeApplied -= UpgradeApplied;
+            _inputEventBus.OnRunButtonPerformed -= TrySwitchLight;
+            _playerEventBus.OnStageChanged -= TrySwitchDarkness;
         }
         
+        public void FixedExecute(float fixedDeltaTime)
+        {
+            if (_winTimer != null)
+            {
+                if (_winTimer.Wait())
+                {
+                    _winTimer = null;
+                    TriggerWin();
+                }
+            }
+        }
+
+        private void TriggerWin()
+        {
+            _audioEventBus.OnPlaySound?.Invoke(AudioResourceID.Sound_Win);
+            _gameEventBus.OnWin?.Invoke();
+        }
+
+
         private void UpgradeApplied(UpgradeID upgradeID)
         {
             if (upgradeID == UpgradeID.UpgradeShieldTime)
@@ -87,6 +117,40 @@ namespace Player
             else if (upgradeID == UpgradeID.UpgradeNightVision)
             {
                 _playerEventBus.OnActivateNightvision?.Invoke();
+                _playerView.IsLightOn = false;
+                _playerView.IsNightvision = true;
+                _playerView.FlashlightObject.SetActive(false);
+                if (_playerView.DarknessObject.activeInHierarchy)
+                {
+                    _playerView.DarknessObject.SetActive(false);
+                    _playerView.NightvisionObject.SetActive(true);
+                }
+                _audioEventBus.OnPlaySound?.Invoke(AudioResourceID.Sound_Nightvision);
+            }
+        }
+        
+        private void TrySwitchDarkness(StageID stageID)
+        {
+            if (stageID == StageID.Stage3)
+            {
+                if (!_playerView.IsNightvision)
+                {
+                    _playerView.DarknessObject.SetActive(true);
+                }
+                else
+                {
+                    _playerView.NightvisionObject.SetActive(true);
+                }
+            }
+        }
+        
+        private void TrySwitchLight()
+        {
+            if (!_playerView.IsNightvision & _playerView.DarknessObject.activeInHierarchy)
+            {
+                _playerView.FlashlightObject.SetActive(!_playerView.IsLightOn);
+                _playerView.IsLightOn = !_playerView.IsLightOn;
+                _audioEventBus.OnPlaySound?.Invoke(AudioResourceID.Sound_SwitchLight);
             }
         }
         
@@ -104,6 +168,7 @@ namespace Player
                 {
                     if (_oxygenRecoveryChance == 0)
                     {
+                        _audioEventBus.OnPlaySound?.Invoke(AudioResourceID.Sound_Hit);
                         RemoveOxygen(3);
                     }
                     else
@@ -111,6 +176,7 @@ namespace Player
                         int chance = _random.Next(0, 100);
                         if (chance / 100f > _oxygenRecoveryChance)
                         {
+                            _audioEventBus.OnPlaySound?.Invoke(AudioResourceID.Sound_Hit);
                             RemoveOxygen(3);
                         }
                     }
@@ -213,11 +279,13 @@ namespace Player
         {
             if (_playerView.gameObject == collider.gameObject)
             {
-                _audioEventBus.OnPlaySound?.Invoke(AudioResourceID.Sound_Win);
-                _gameEventBus.OnWin?.Invoke();
+                PlayerPrefs.SetInt(UpgradeRequirement.SecondTry.ToString(), 1);
+                PlayerPrefs.SetInt(UpgradeRequirement.Completed.ToString(), 1);
+                _playerView.TentaclesAnimator.enabled = true;
+                _stateEventsBus.OnPauseStateActivate?.Invoke();
+                _audioEventBus.OnPlaySound?.Invoke(AudioResourceID.Sound_Roar);
+                _winTimer = new Timer(3f);
             }
         }
-
-
     }
 }
