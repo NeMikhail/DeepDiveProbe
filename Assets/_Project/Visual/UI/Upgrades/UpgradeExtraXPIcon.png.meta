@@ -160,7 +160,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      UpgradeExtraXPIcon_0: -1930412775080372534
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

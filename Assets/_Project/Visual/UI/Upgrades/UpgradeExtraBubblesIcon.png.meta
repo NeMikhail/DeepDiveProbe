@@ -160,7 +160,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      UpgradeExtraBubblesIcon_0: 5522089274047628187
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

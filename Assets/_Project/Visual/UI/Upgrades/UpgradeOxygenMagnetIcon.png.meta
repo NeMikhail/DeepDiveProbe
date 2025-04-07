@@ -160,7 +160,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      UpgradeOxygenMagnetIcon_0: 6204648382260406026
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

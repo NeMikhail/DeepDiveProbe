@@ -160,7 +160,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      UpgradeSlowingDiveIcon_0: -4481748357418280283
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

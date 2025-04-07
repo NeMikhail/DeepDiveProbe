@@ -160,7 +160,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      UpgradeFastMovingIcon_0: 4600780283875834271
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
