@@ -91,6 +91,7 @@ namespace Player
         private void TriggerWin()
         {
             _audioEventBus.OnPlaySound?.Invoke(AudioResourceID.Sound_Win);
+            _audioEventBus.OnStopMusicAndEnvSound?.Invoke();
             _gameEventBus.OnWin?.Invoke();
         }
 

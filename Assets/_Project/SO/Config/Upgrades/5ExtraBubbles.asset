@@ -16,4 +16,4 @@ MonoBehaviour:
   _upgradeImage: {fileID: 5522089274047628187, guid: 4e34c13d134653942a2eb8c2915bb187, type: 3}
   _upgradeText: Extra oxygen bubbles
   _maxUpgradeLevels: 1
-  _upgradeRequirement: 1
+  _upgradeRequirement: 3
