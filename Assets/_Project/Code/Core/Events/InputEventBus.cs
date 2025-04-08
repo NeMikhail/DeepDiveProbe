@@ -7,6 +7,7 @@ namespace GameCoreModule
     {
         private Action _onEnableInput;
         private Action _onDisableInput;
+        private Action _onEnableMobileInput;
         
         private Action<Vector2> _onMovementInputValueChanged;
         private Action<Vector2> _onLookInputValueChanged;
@@ -31,7 +32,9 @@ namespace GameCoreModule
 
         public Action OnEnableInput { get => _onEnableInput; set => _onEnableInput = value; }
         public Action OnDisableInput { get => _onDisableInput; set => _onDisableInput = value; }
-        
+
+        public Action OnEnableMobileInput { get => _onEnableMobileInput; set => _onEnableMobileInput = value; }
+
         public Action<Vector2> OnMovementInputValueChanged 
         { get => _onMovementInputValueChanged; set => _onMovementInputValueChanged = value; }
         public Action<Vector2> OnLookInputValueChanged

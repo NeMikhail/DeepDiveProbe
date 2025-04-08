@@ -28,6 +28,7 @@ namespace Player
         private bool _isPlayingState;
         private float _lineChangingTime;
         private float _layerChangingTime;
+        private Vector2 _basicScale;
 
         [Inject]
         public void Construct(InputEventBus inputEvents,
@@ -58,6 +59,7 @@ namespace Player
             _upgradeEventBus.OnUpgradeApplied += UpgradeApplied;
             _lineChangingTime = _playerConfig.LineChangingTime;
             _layerChangingTime = _playerConfig.LayerChangingTime;
+            _basicScale = _playerView.PlayerSpriteRenderer.gameObject.transform.localScale;
         }
 
         public void Cleanup()
@@ -186,6 +188,19 @@ namespace Player
             {
                 _isMoving = false;
                 _currentLayer = _targetLayer;
+                Transform playerSpriteTransform = _playerView.PlayerSpriteRenderer.gameObject.transform;
+                if (_currentLayer == 1)
+                {
+                    playerSpriteTransform.localScale = _basicScale * 0.8f;
+                }
+                else if (_currentLayer == 2)
+                {
+                    playerSpriteTransform.localScale = _basicScale;
+                }
+                else
+                {
+                    playerSpriteTransform.localScale = _basicScale * 1.2f;
+                }
                 _playerView.CurrentLayer = _currentLayer;
                 _playerEventBus.OnChangeLayer?.Invoke(_currentLayer);
                 _playerView.PlayerSpriteRenderer.sprite = _playerConfig.DefaultSprite;

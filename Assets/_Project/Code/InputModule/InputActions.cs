@@ -6,7 +6,7 @@ using Zenject;
 
 namespace Input
 {
-    public class InputActions : IAction, IPreInitialisation, IExecute, ICleanUp
+    public class InputActions : IAction, IPreInitialisation, IInitialisation, IExecute, ICleanUp
     {
         private InputSystem_Actions _controls;
         private InputEventBus _inputEventBus;
@@ -29,12 +29,19 @@ namespace Input
             _inputEventBus.OnDisableInput += DisableInput;
             BindInput();
             _currentMovementVector = Vector2.zero;
+        }
+        
+        public void Initialisation()
+        {
             bool isWebGLOnDesktop = !Application.isMobilePlatform
                                     && Application.platform == RuntimePlatform.WebGLPlayer;
 
             bool isWebGLOnMobile = Application.isMobilePlatform
                                    && Application.platform == RuntimePlatform.WebGLPlayer;
-            
+            if (isWebGLOnMobile)
+            {
+                _inputEventBus.OnEnableMobileInput?.Invoke();
+            }
         }
 
         public void Cleanup()
@@ -215,7 +222,6 @@ namespace Input
         {
             _inputEventBus.OnUIClickButtonCanceled?.Invoke();
         }
-        
     }
 }
 

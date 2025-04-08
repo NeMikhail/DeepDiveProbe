@@ -49,6 +49,7 @@ namespace UI
         public void PreInitialisation()
         {
             _guiView.InitializeView();
+            _inputEventBus.OnEnableMobileInput += EnableMobileInput;
         }
 
         public void Initialisation()
@@ -94,6 +95,7 @@ namespace UI
             _playerEventBus.OnExtraLifeAdded -= AddExtraLife;
             _playerEventBus.OnExtraLifeRemoved -= RemoveExtraLife;
             _guiView.DenyUpgrade.Button.onClick.RemoveListener(DenyUpgrade);
+            _inputEventBus.OnEnableMobileInput -= EnableMobileInput;
         }
         
         public void LateExecute(float fixedDeltaTime)
@@ -106,6 +108,11 @@ namespace UI
                     CheckDialogueEnd();
                 }
             }
+        }
+
+        private void EnableMobileInput()
+        {
+            _guiView.MobileInputPanel.SetActive(true);
         }
         
         private void RemoveExtraLife()

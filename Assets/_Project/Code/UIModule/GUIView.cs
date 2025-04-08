@@ -30,6 +30,7 @@ namespace UI
         [SerializeField] private Slider _expSlider;
         [SerializeField] private ButtonView _denyUpgrade;
         [SerializeField] private List<GameObject> _extraLifes;
+        [SerializeField] private GameObject _mobileInputPanel;
         private List<UpgradeView> _activeUpgradeViews;
         
         public ButtonView PauseButton => _pauseButton;
@@ -49,6 +50,7 @@ namespace UI
         public Slider ExpSlider => _expSlider;
         public ButtonView DenyUpgrade => _denyUpgrade;
         public List<GameObject> ExtraLifes => _extraLifes;
+        public GameObject MobileInputPanel => _mobileInputPanel;
         public List<UpgradeView> ActiveUpgradeViews => _activeUpgradeViews;
         
 
