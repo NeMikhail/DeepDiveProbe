@@ -14,6 +14,9 @@ namespace Player
         [SerializeField] private GameObject _flashlightObject;
         [SerializeField] private GameObject _nightvisionObject;
         [SerializeField] private Animator _tentaclesAnimator;
+        [SerializeField] private GameObject _layer1Object;
+        [SerializeField] private GameObject _layer2Object;
+        [SerializeField] private GameObject _layer3Object;
         private int _currentLine;
         private int _currentLayer;
         private int _currentOxygen;
@@ -34,6 +37,9 @@ namespace Player
         public GameObject FlashlightObject => _flashlightObject;
         public GameObject NightvisionObject => _nightvisionObject;
         public Animator TentaclesAnimator => _tentaclesAnimator;
+        public GameObject Layer1Object => _layer1Object;
+        public GameObject Layer2Object => _layer2Object;
+        public GameObject Layer3Object => _layer3Object;
         public string ViewID { get => _viewID; set => _viewID = value; }
         public int CurrentLine { get => _currentLine; set => _currentLine = value; }
         public int CurrentLayer { get => _currentLayer; set => _currentLayer = value; }

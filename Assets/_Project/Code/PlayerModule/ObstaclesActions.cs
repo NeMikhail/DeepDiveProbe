@@ -387,7 +387,7 @@ namespace Player
                     else if(obstacleView.LayerId == currentIndex - 1)
                     {
                         SetCollidingLayer(obstacleView, false);
-                        obstacleView.SpriteRenderer.color = Color.gray;
+                        obstacleView.SpriteRenderer.color = Color.black;
                         Vector3 scale = new Vector3(scaleMultipler.x * smallSize1.x,
                             scaleMultipler.y * smallSize1.y, scaleMultipler.z * smallSize1.z);
                         obstacleView.SpriteRenderer.gameObject.transform.localScale = scale;

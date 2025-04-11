@@ -192,14 +192,23 @@ namespace Player
                 if (_currentLayer == 1)
                 {
                     playerSpriteTransform.localScale = _basicScale * 0.8f;
+                    _playerView.Layer1Object.SetActive(true);
+                    _playerView.Layer2Object.SetActive(false);
+                    _playerView.Layer3Object.SetActive(false);
                 }
                 else if (_currentLayer == 2)
                 {
                     playerSpriteTransform.localScale = _basicScale;
+                    _playerView.Layer1Object.SetActive(false);
+                    _playerView.Layer2Object.SetActive(true);
+                    _playerView.Layer3Object.SetActive(false);
                 }
                 else
                 {
                     playerSpriteTransform.localScale = _basicScale * 1.2f;
+                    _playerView.Layer1Object.SetActive(false);
+                    _playerView.Layer2Object.SetActive(false);
+                    _playerView.Layer3Object.SetActive(true);
                 }
                 _playerView.CurrentLayer = _currentLayer;
                 _playerEventBus.OnChangeLayer?.Invoke(_currentLayer);
